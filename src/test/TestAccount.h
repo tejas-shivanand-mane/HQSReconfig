@@ -43,6 +43,8 @@ class TestAccount
 
     TestAccount create(SecretKey const& secretKey, uint64_t initialBalance);
     TestAccount create(std::string const& name, uint64_t initialBalance);
+    void leaveNetwork(SecretKey const& secretKey, SCPQuorumSet initialQuorum);
+    void leaveNetwork(std::string const& name, SCPQuorumSet initialQuorum);
     void merge(PublicKey const& into);
     void inflation();
 

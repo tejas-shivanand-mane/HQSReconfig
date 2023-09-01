@@ -16,6 +16,8 @@
 #include <Tracy.hpp>
 #include <algorithm>
 #include <functional>
+#include "herder/QuorumTracker.h"
+#include "scp/SCP.h"
 
 namespace stellar
 {
@@ -279,6 +281,83 @@ LocalNode::isQuorum(
     } while (count != pNodes.size());
 
     return isQuorumSlice(qSet, pNodes);
+}
+
+//This is function that verifies whether a nodeSet is a transitive quorum
+bool
+LocalNode::isQuorumPure(stellar::QuorumTracker::QuorumMap const& qMap,
+                                 std::vector<NodeID> const& nodeSet)
+{
+    //for each node in the nodeSet, verify whether set contains a quorum slice
+    for (auto const& validator : nodeSet)
+    {
+        auto it = qMap.find(validator);
+        if(it != qMap.end){
+
+        }
+        if(!isQuorumSlice(it->second.mQuorumSet, nodeSet)){
+            return false;
+        }
+    }
+    return true;
+}
+
+std::vector<std::vector<NodeID>>
+LocalNode::computeSortedPowerSet(std::vector<NodeID> const& allValidators, int n) {
+    std::vector<std::vector<NodeID>> powerSet;
+
+    for (int counter = 0; counter < (1 << n); counter++) {
+        std::vector<NodeID> subset;
+        for (int j = 0; j < n; j++) {
+            if (counter & (1 << j)) {
+                subset.push_back(allValidators[j]);
+            }
+        }
+        powerSet.push_back(subset);
+    }
+
+     // Sort subsets by cardinality (size)
+    sort(powerSet.begin(), powerSet.end(), [](const vector<NodeID>& a, const vector<NodeID>& b) {
+        return a.size() < b.size();
+    });
+
+    //std::vector<std::vector<NodeID>> sortedPowerSet;
+    // Print the sorted power set
+    //for (const std::vector<NodeID>& subset : powerSet) {
+        //cout << "{ ";
+        //for (char ch : subset) {
+            //cout << ch << " ";
+        //}
+        //cout << "}" << endl;
+    //}
+    return powerSet;
+}
+
+std::vector<std::vector<NodeID>>
+LocalNode::findMinQuorum(std::vector<NodeID> const& allValidators, stellar::QuorumTracker::QuorumMap const& qMap) {
+    //list the powerset by cardinality order
+    if(allValidators && allValidators.size() != 0){
+        auto sortedPowerset = computeSortedPowerSet(allValidators, allValidators.size());
+        std::vector<std::vector<NodeID>> minQ;
+        for(auto subset : sortedPowerset){
+            bool supersetForMinQ = false;
+            for(auto q : minQ){
+                // The current subset is a superset of some minimal quorum. Therefore, it cannot be a minimal quorum
+                if(std::includes(subset.begin(), subset.end(), q.begin(), q.end());){
+                    supersetForMinQ = true;
+                    break;
+                }
+            }
+            if(!supersetForMinQ && isQuorumPure(, subset)){
+                minQ.emplace_back(subset);
+            }
+        }
+    }
+    else{
+        std::vector<NodeID> emptySet;
+        return emptySet;
+    }
+    
 }
 
 std::vector<NodeID>

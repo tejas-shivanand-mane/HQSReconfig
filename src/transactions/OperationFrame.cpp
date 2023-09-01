@@ -30,6 +30,7 @@
 #include "transactions/RevokeSponsorshipOpFrame.h"
 #include "transactions/SetOptionsOpFrame.h"
 #include "transactions/SetTrustLineFlagsOpFrame.h"
+#include "transactions/LeaveOpFrame.h"
 #include "transactions/TransactionFrame.h"
 #include "transactions/TransactionUtils.h"
 #include "util/Logging.h"
@@ -117,6 +118,8 @@ OperationFrame::makeHelper(Operation const& op, OperationResult& res,
         return std::make_shared<LiquidityPoolDepositOpFrame>(op, res, tx);
     case LIQUIDITY_POOL_WITHDRAW:
         return std::make_shared<LiquidityPoolWithdrawOpFrame>(op, res, tx);
+    case LEAVE:
+        return std::make_shared<LeaveOpFrame>(op, res, tx);
 #ifdef ENABLE_NEXT_PROTOCOL_VERSION_UNSAFE_FOR_PRODUCTION
     case INVOKE_HOST_FUNCTION:
         return std::make_shared<InvokeHostFunctionOpFrame>(op, res, tx);

@@ -5,6 +5,8 @@
 #pragma once
 
 #include "xdr/Stellar-SCP.h"
+#include "scp/SCP.h"
+#include "xdr/Stellar-ledger.h"
 
 namespace stellar
 {
@@ -16,4 +18,7 @@ bool isQuorumSetSane(SCPQuorumSet const& qSet, bool extraChecks,
 
 // normalize the quorum set, optionally removing idToRemove
 void normalizeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove = nullptr);
+
+// remove a node without updating the threshold
+void removeNodeQSetOut(SCPQuorumSet& qSet, NodeID const* idToRemove);
 }

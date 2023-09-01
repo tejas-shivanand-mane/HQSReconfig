@@ -13,6 +13,7 @@
 #include "test/TestExceptions.h"
 #include "test/TxTests.h"
 #include "transactions/TransactionUtils.h"
+#include "xdr/Stellar-SCP.h"
 
 #include <lib/catch.hpp>
 
@@ -171,6 +172,19 @@ TestAccount
 TestAccount::create(std::string const& name, uint64_t initialBalance)
 {
     return create(getAccount(name.c_str()), initialBalance);
+}
+
+void
+TestAccount::leaveNetwork(SecretKey const& secretKey, SCPQuorumSet initialQuorum)
+{
+    auto publicKey = secretKey.getPublicKey();
+    applyTx(tx({leave(publicKey, initialQuorum)}), mApp);
+}
+
+void
+TestAccount::leaveNetwork(std::string const& name, SCPQuorumSet initialQuorum)
+{
+    return leaveNetwork(getAccount(name.c_str()), initialQuorum);
 }
 
 void

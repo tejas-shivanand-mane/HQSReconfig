@@ -29,6 +29,7 @@
 #include "util/XDROperators.h"
 #include "util/types.h"
 #include "xdrpp/autocheck.h"
+#include "xdr/Stellar-SCP.h"
 
 #include <lib/catch.hpp>
 
@@ -50,6 +51,13 @@ ExpectedOpResult::ExpectedOpResult(CreateAccountResultCode createAccountCode)
     mOperationResult.code(opINNER);
     mOperationResult.tr().type(CREATE_ACCOUNT);
     mOperationResult.tr().createAccountResult().code(createAccountCode);
+}
+
+ExpectedOpResult::ExpectedOpResult(LeaveResultCode leaveCode)
+{
+    mOperationResult.code(opINNER);
+    mOperationResult.tr().type(LEAVE);
+    mOperationResult.tr().leaveResult().code(leaveCode);
 }
 
 ExpectedOpResult::ExpectedOpResult(PaymentResultCode paymentCode)
@@ -761,6 +769,17 @@ createAccount(PublicKey const& dest, int64_t amount)
 }
 
 Operation
+leave(PublicKey const& dest, SCPQuorumSet quorums)
+{
+    Operation op;
+    op.body.type(LEAVE);
+    //op.body.leaveOp().startingBalance = amount;
+    op.body.leaveOp().qSet = quorums;
+    op.body.leaveOp().destination = dest;
+    return op;
+}
+
+Operation
 payment(PublicKey const& to, int64_t amount)
 {
     Operation op;
@@ -852,6 +871,21 @@ createUploadWasmTx(Application& app, TestAccount& account, uint32_t fee,
     return std::dynamic_pointer_cast<TransactionFrame>(tx);
 }
 #endif
+
+SCPQuorumSet 
+testQSet(int nodeNum, int const kKeysCount){
+    SCPQuorumSet q;
+    q.threshold = 2;
+    std::vector<SecretKey> otherKeys;
+    //int const kKeysCount = 7;
+    for (int i = 0; i < kKeysCount; i++)
+    {
+        otherKeys.emplace_back(SecretKey::pseudoRandomForTesting());
+    }
+    q.validators.emplace_back(otherKeys[nodeNum].getPublicKey());
+    q.validators.emplace_back(otherKeys[nodeNum + 1].getPublicKey());
+    return q;
+};
 
 Asset
 makeNativeAsset()

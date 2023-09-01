@@ -173,6 +173,27 @@ normalizeQSetSimplify(SCPQuorumSet& qSet, NodeID const* idToRemove)
     }
 }
 
+void removeNodeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove){
+    using xdr::operator==;
+    auto& v = qSet.validators;
+    if (idToRemove)
+    {
+        auto it_v = std::remove_if(v.begin(), v.end(), [&](NodeID const& n) {
+            return n == *idToRemove;
+        });
+        //qSet.threshold -= uint32(v.end() - it_v);
+        v.erase(it_v, v.end());
+    }
+
+    auto& i = qSet.innerSets;
+    auto it = i.begin();
+    while (it != i.end())
+    {
+        removeNodeQSet(*it, idToRemove);
+        it++;
+    }
+}
+
 template <typename InputIt1, typename InputIt2, class Compare>
 int
 intLexicographicalCompare(InputIt1 first1, InputIt1 last1, InputIt2 first2,
@@ -263,4 +284,11 @@ normalizeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove)
     normalizeQSetSimplify(qSet, idToRemove);
     normalizeQuorumSetReorder(qSet);
 }
+
+void
+removeNodeQSetOut(SCPQuorumSet& qSet, NodeID const* idToRemove)
+{
+    removeNodeQSet(qSet, idToRemove);
+}
+
 }

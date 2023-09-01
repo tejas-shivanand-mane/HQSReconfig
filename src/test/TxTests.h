@@ -31,6 +31,7 @@ struct ExpectedOpResult
 
     ExpectedOpResult(OperationResultCode code);
     ExpectedOpResult(CreateAccountResultCode createAccountCode);
+    ExpectedOpResult(LeaveResultCode leaveCode);
     ExpectedOpResult(PaymentResultCode paymentCode);
     ExpectedOpResult(AccountMergeResultCode accountMergeCode);
     ExpectedOpResult(AccountMergeResultCode accountMergeCode,
@@ -166,6 +167,8 @@ Operation bumpSequence(SequenceNumber to);
 
 Operation createAccount(PublicKey const& dest, int64_t amount);
 
+Operation leave(PublicKey const& dest, SCPQuorumSet quorums);
+
 Operation payment(PublicKey const& to, int64_t amount);
 
 Operation payment(PublicKey const& to, Asset const& asset, int64_t amount);
@@ -263,6 +266,8 @@ Operation liquidityPoolDeposit(PoolID const& poolID, int64_t maxAmountA,
 Operation liquidityPoolWithdraw(PoolID const& poolID, int64_t amount,
                                 int64_t minAmountA, int64_t minAmountB);
 
+// generate a test quorum
+SCPQuorumSet testQSet(int nodeNum, int const kKeysCount);
 Asset makeNativeAsset();
 Asset makeInvalidAsset();
 Asset makeAsset(SecretKey const& issuer, std::string const& code);

@@ -3,6 +3,7 @@
 // of this distribution or at http://www.apache.org/licenses/LICENSE-2.0
 
 %#include "xdr/Stellar-ledger-entries.h"
+%#include "xdr/Stellar-SCP.h"
 
 namespace stellar
 {
@@ -57,7 +58,8 @@ enum OperationType
     CLAWBACK_CLAIMABLE_BALANCE = 20,
     SET_TRUST_LINE_FLAGS = 21,
     LIQUIDITY_POOL_DEPOSIT = 22,
-    LIQUIDITY_POOL_WITHDRAW = 23
+    LIQUIDITY_POOL_WITHDRAW = 23,
+    LEAVE = 24
 };
 
 /* CreateAccount
@@ -73,6 +75,7 @@ struct CreateAccountOp
     AccountID destination; // account to create
     int64 startingBalance; // amount they end up with
 };
+
 
 /* Payment
 
@@ -465,6 +468,20 @@ struct LiquidityPoolWithdrawOp
     int64 minAmountB; // minimum amount of second asset to withdraw
 };
 
+/* Leave
+The current process issue leave request.
+
+Threshold: med
+
+Result: LeaveResult
+
+*/
+struct LeaveOp
+{
+    AccountID destination; // Leaving process
+    SCPQuorumSet qSet; // Quorums of the leaving process
+};
+
 /* An operation is the lowest unit of work that a transaction does */
 struct Operation
 {
@@ -523,6 +540,8 @@ struct Operation
         LiquidityPoolDepositOp liquidityPoolDepositOp;
     case LIQUIDITY_POOL_WITHDRAW:
         LiquidityPoolWithdrawOp liquidityPoolWithdrawOp;
+    case LEAVE:
+        LeaveOp leaveOp;
     }
     body;
 };
@@ -1588,6 +1607,26 @@ case LIQUIDITY_POOL_WITHDRAW_UNDER_MINIMUM:
     void;
 };
 
+/******* Leave Result ********/
+
+enum LeaveResultCode
+{
+    // codes considered as "success" for the operation
+    LEAVE_SUCCESS = 0, // the leave request succeed
+
+    // codes considered as "failure" for the operation
+    LEAVE_MALFORMED = -1   // invalid destination
+};
+
+union LeaveResult switch (LeaveResultCode code)
+{
+case LEAVE_SUCCESS:
+    void;
+case LEAVE_MALFORMED:
+    void;
+};
+
+
 /* High level Operation Result */
 enum OperationResultCode
 {
@@ -1654,6 +1693,8 @@ case opINNER:
         LiquidityPoolDepositResult liquidityPoolDepositResult;
     case LIQUIDITY_POOL_WITHDRAW:
         LiquidityPoolWithdrawResult liquidityPoolWithdrawResult;
+    case LEAVE:
+        LeaveResult leaveResult;
     }
     tr;
 case opBAD_AUTH:
