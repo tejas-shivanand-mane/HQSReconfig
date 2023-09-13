@@ -7,6 +7,7 @@
 #include "xdr/Stellar-SCP.h"
 #include "scp/SCP.h"
 #include "xdr/Stellar-ledger.h"
+#include "herder/QuorumTracker.h"
 
 namespace stellar
 {
@@ -20,5 +21,7 @@ bool isQuorumSetSane(SCPQuorumSet const& qSet, bool extraChecks,
 void normalizeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove = nullptr);
 
 // remove a node from the calculated minimal quorum by updating the quorum slice.
-void removeNodeQSetOut(SCPQuorumSet& qSet, NodeID const* idToRemove);
+SCPQuorumSet removeNodeQSet(SCPQuorumSet& qSet, NodeID const& idToRemove, stellar::QuorumTracker::QuorumMap const& qMap);
+
+//void deleteAndReplace(SCPQuorumSet& qSet, NodeID const* idToRemove, SCPQuorumSet& rSet);
 }
