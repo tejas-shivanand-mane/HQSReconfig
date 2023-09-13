@@ -19,6 +19,6 @@ bool isQuorumSetSane(SCPQuorumSet const& qSet, bool extraChecks,
 // normalize the quorum set, optionally removing idToRemove
 void normalizeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove = nullptr);
 
-// remove a node without updating the threshold
+// remove a node from the calculated minimal quorum by updating the quorum slice.
 void removeNodeQSetOut(SCPQuorumSet& qSet, NodeID const* idToRemove);
 }

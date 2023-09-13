@@ -173,7 +173,9 @@ normalizeQSetSimplify(SCPQuorumSet& qSet, NodeID const* idToRemove)
     }
 }
 
-void removeNodeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove){
+void
+deleteAndReplace(SCPQuorumSet& qSet, NodeID const* idToRemove, SCPQuorumSet& rSet)
+{
     using xdr::operator==;
     auto& v = qSet.validators;
     if (idToRemove)
@@ -181,7 +183,7 @@ void removeNodeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove){
         auto it_v = std::remove_if(v.begin(), v.end(), [&](NodeID const& n) {
             return n == *idToRemove;
         });
-        //qSet.threshold -= uint32(v.end() - it_v);
+        qSet.threshold -= uint32(v.end() - it_v);
         v.erase(it_v, v.end());
     }
 
@@ -189,9 +191,69 @@ void removeNodeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove){
     auto it = i.begin();
     while (it != i.end())
     {
-        removeNodeQSet(*it, idToRemove);
-        it++;
+        normalizeQSetSimplify(*it, idToRemove);
+        // merge singleton inner sets into validator list
+        if (it->threshold == 1 && it->validators.size() == 1 &&
+            it->innerSets.size() == 0)
+        {
+            v.emplace_back(it->validators.front());
+            it = i.erase(it);
+        }
+        else
+        {
+            it++;
+        }
     }
+
+    // simplify quorum set if needed
+    if (qSet.threshold == 1 && v.size() == 0 && i.size() == 1)
+    {
+        auto t = qSet.innerSets.back();
+        qSet = t;
+    }
+}
+
+
+// update the quorum slice so that the calculated quorum excludes the idToRemove
+//  * removes nodeID
+//      { t: n, v: { ...BEFORE... , nodeID, ...AFTER... }, ...}
+//      { t: n-1, v: { ...BEFORE..., ...AFTER...} , ... }
+// 
+void removeNodeQSet(SCPQuorumSet& qSet, NodeID const& idToRemove, stellar::QuorumTracker::QuorumMap const& qMap){
+    SCPQuorumSet leavingNodeQ;
+    auto it = qMap.find(idToRemove);
+    if(it != qMap.end()){
+        leavingNodeQ = *(it->second.mQuorumSet);
+    }
+    else{
+        //delete the leaving node in qSet
+        normalizeQSetSimplify(qSet, *idToRemove);
+        return;
+    }
+    
+    //delete the leaving node in it's own quorums
+    normalizeQSetSimplify(leavingNodeQ, *idToRemove);
+
+    //delete and replace the leaving node in qSet
+    deleteAndReplace(qSet, *idToRemove, leavingNodeQ);    
+    return;
+
+
+    //using xdr::operator==;
+    //auto& v = qSet.validators;
+    //auto it_v = std::remove_if(v.begin(), v.end(), [&](NodeID const& n) {
+    //    return n == idToRemove;
+    //});
+    //qSet.threshold -= uint32(v.end() - it_v);
+    //v.erase(it_v, v.end());
+
+    //auto& i = qSet.innerSets;
+    //auto it = i.begin();
+    //while (it != i.end())
+    //{
+    //    normalizeQSetSimplify(*it, *idToRemove);
+    //    it++;
+    //}
 }
 
 template <typename InputIt1, typename InputIt2, class Compare>

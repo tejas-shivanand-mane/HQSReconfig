@@ -10,7 +10,9 @@
 
 #include "lib/json/json-forwards.h"
 #include "scp/SCPDriver.h"
+#include "scp/SCP.h"
 #include "util/HashOfHash.h"
+#include "herder/QuorumTracker.h"
 
 namespace stellar
 {
@@ -59,6 +61,20 @@ class LocalNode
                               std::vector<NodeID> const& nodeSet);
     static bool isVBlocking(SCPQuorumSet const& qSet,
                             std::vector<NodeID> const& nodeSet);
+
+    // intersection test foe leave request
+    static bool isQuorumPure(NodeID const& checkedNode, stellar::QuorumTracker::QuorumMap const& qMap,
+                                 std::vector<NodeID> const& nodeSet);
+    
+    static std::vector<std::vector<NodeID>> computeSortedPowerSet(std::vector<NodeID> const& allValidators, int n);
+
+    static std::vector<std::vector<NodeID>> findMinQuorum(NodeID const& checkedNode, 
+                                                            std::vector<NodeID> const& allValidators, 
+                                                            stellar::QuorumTracker::QuorumMap const& qMap);
+    static bool isQuorumBlocking(std::vector<std::vector<NodeID>> const& minQs,
+                                 std::vector<NodeID> const& nodeSet);
+    static bool leaveCheck(std::vector<std::vector<NodeID>> const& minQs,
+                                 std::vector<NodeID> const& tomb, NodeID const& leavingNode);
 
     // Tests this node against a map of nodeID -> T for the specified qSetHash.
 

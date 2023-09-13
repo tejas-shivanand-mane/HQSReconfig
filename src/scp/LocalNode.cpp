@@ -285,20 +285,35 @@ LocalNode::isQuorum(
 
 //This is function that verifies whether a nodeSet is a transitive quorum
 bool
-LocalNode::isQuorumPure(stellar::QuorumTracker::QuorumMap const& qMap,
+LocalNode::isQuorumPure(NodeID const& checkedNode, stellar::QuorumTracker::QuorumMap const& qMap,
                                  std::vector<NodeID> const& nodeSet)
 {
-    //for each node in the nodeSet, verify whether set contains a quorum slice
+    //for each node in the nodeSet, verify whether nodeSet contains a quorum slice
     for (auto const& validator : nodeSet)
     {
         auto it = qMap.find(validator);
-        if(it != qMap.end){
-
+        if(it != qMap.end()){
+            if(!isQuorumSlice(*(it->second.mQuorumSet), nodeSet)){
+                return false;
+            }
         }
-        if(!isQuorumSlice(it->second.mQuorumSet, nodeSet)){
+        // the validator is not known
+        else{
             return false;
         }
     }
+
+    // verify the current node has a quorum slice in this quorum: this is a quorum for checkedNode
+    auto it = qMap.find(checkedNode);
+        if(it != qMap.end()){
+            // nodeSet is not a quorum for checkedNode
+            if(!isQuorumSlice(*(it->second.mQuorumSet), nodeSet)){
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
     return true;
 }
 
@@ -317,7 +332,7 @@ LocalNode::computeSortedPowerSet(std::vector<NodeID> const& allValidators, int n
     }
 
      // Sort subsets by cardinality (size)
-    sort(powerSet.begin(), powerSet.end(), [](const vector<NodeID>& a, const vector<NodeID>& b) {
+    sort(powerSet.begin(), powerSet.end(), [](const std::vector<NodeID>& a, const std::vector<NodeID>& b) {
         return a.size() < b.size();
     });
 
@@ -333,31 +348,81 @@ LocalNode::computeSortedPowerSet(std::vector<NodeID> const& allValidators, int n
     return powerSet;
 }
 
+// when we find minimal quorums, do we need to confirm it is a minimal quorum for us?
+// what if it is just a minimal quorum for other nodes?
 std::vector<std::vector<NodeID>>
-LocalNode::findMinQuorum(std::vector<NodeID> const& allValidators, stellar::QuorumTracker::QuorumMap const& qMap) {
+LocalNode::findMinQuorum(NodeID const& checkedNode, std::vector<NodeID> const& allValidators, stellar::QuorumTracker::QuorumMap const& qMap) {
     //list the powerset by cardinality order
-    if(allValidators && allValidators.size() != 0){
+    if(allValidators.size() != 0){
         auto sortedPowerset = computeSortedPowerSet(allValidators, allValidators.size());
         std::vector<std::vector<NodeID>> minQ;
         for(auto subset : sortedPowerset){
             bool supersetForMinQ = false;
             for(auto q : minQ){
-                // The current subset is a superset of some minimal quorum. Therefore, it cannot be a minimal quorum
-                if(std::includes(subset.begin(), subset.end(), q.begin(), q.end());){
+                // The current considered set is a superset of some minimal quorum. Therefore, it cannot be a minimal quorum
+                if(std::includes(subset.begin(), subset.end(), q.begin(), q.end())){
                     supersetForMinQ = true;
                     break;
                 }
             }
-            if(!supersetForMinQ && isQuorumPure(, subset)){
+            // the current considered set is not a super set of any minimal quorum and is a quorum. 
+            // Since any strict subset of the current considered set is not a quorum, the current set is a minimal quorum.
+            if(!supersetForMinQ && isQuorumPure(checkedNode, qMap, subset)){
                 minQ.emplace_back(subset);
             }
         }
+        return minQ;
     }
     else{
-        std::vector<NodeID> emptySet;
+        std::vector<std::vector<NodeID>> emptySet;
         return emptySet;
     }
-    
+}
+
+// check whether a nodeSet is quorum blocking
+bool
+LocalNode::isQuorumBlocking(std::vector<std::vector<NodeID>> const& minQs,
+                                 std::vector<NodeID> const& nodeSet)
+{
+    //bool existQNotBlocked = false;
+    for(auto q : minQs){
+        std::vector<NodeID> intersection;
+        std::set_intersection(q.begin(), q.end(), nodeSet.begin(), nodeSet.end(),
+                          std::back_inserter(intersection));
+        if(intersection.empty()){
+            return false;
+        }
+    }
+    return true;
+}
+
+//check whether a quorum system can let tombset and p leave
+//This is the intersection check performed in our paper.
+bool
+LocalNode::leaveCheck(std::vector<std::vector<NodeID>> const& minQs,
+                                 std::vector<NodeID> const& tomb, NodeID const& leavingNode)
+{
+    for(size_t i = 0; i < minQs.size(); ++i){
+        for(size_t j = i + 1; j < minQs.size(); ++j){
+            std::vector<NodeID> intersection;
+            std::set_intersection(minQs[i].begin(), minQs[i].end(), minQs[j].begin(), minQs[j].end(),
+                          std::back_inserter(intersection));
+            for (auto element : tomb) {
+                auto it = std::find(intersection.begin(), intersection.end(), element);
+                if (it != intersection.end()) {
+                    intersection.erase(it);
+                }
+            }
+            auto it = std::find(intersection.begin(), intersection.end(), leavingNode);
+                if (it != intersection.end()) {
+                    intersection.erase(it);
+                }
+            if(!isQuorumBlocking(minQs, intersection)){
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 std::vector<NodeID>
