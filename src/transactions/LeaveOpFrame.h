@@ -32,6 +32,7 @@ class LeaveOpFrame : public OperationFrame
                          TransactionFrame& parentTx);
 
     bool doApply(AbstractLedgerTxn& ltx) override;
+    bool doApply(Application& app, AbstractLedgerTxn& ltx, Hash const& sorobanBasePrngSeed) override;
     bool doCheckValid(uint32_t ledgerVersion) override;
     void
     insertLedgerKeysToPrefetch(UnorderedSet<LedgerKey>& keys) const override;

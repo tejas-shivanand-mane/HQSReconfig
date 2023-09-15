@@ -69,7 +69,7 @@ class LocalNode
     static std::vector<std::vector<NodeID>> computeSortedPowerSet(std::vector<NodeID> const& allValidators, int n);
 
     static std::vector<std::vector<NodeID>> findMinQuorum(NodeID const& checkedNode, 
-                                                            std::vector<NodeID> const& allValidators, 
+                                                            //std::vector<NodeID> const& allValidators, 
                                                             stellar::QuorumTracker::QuorumMap const& qMap);
     static bool isQuorumBlocking(std::vector<std::vector<NodeID>> const& minQs,
                                  std::vector<NodeID> const& nodeSet);

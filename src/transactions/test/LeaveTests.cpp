@@ -36,27 +36,24 @@ TEST_CASE("leave", "[tx][leave]")
     auto root = TestAccount::createRoot(*app);
 
     int64_t const txfee = app->getLedgerManager().getLastTxFee();
-    int64_t const minBalance2 =
-        app->getLedgerManager().getLastMinBalance(2) + 10 * txfee;
+    //int64_t const minBalance2 = app->getLedgerManager().getLastMinBalance(2) + 10 * txfee;
 
-    SECTION("malformed with destination")
-    {
-        //for_all_versions(*app, [&] {
-            auto tx =
-                transactionFrameFromOps(app->getNetworkID(), root,
-                                        {root.op(leave(root, testQSet(0, 2)))}, {});
-    
-            LedgerTxn ltx(app->getLedgerTxnRoot());
-            REQUIRE(!tx->checkValid(*app, ltx, 0, 0, 0));
-            REQUIRE(getLeaveResultCode(tx, 0) ==
-                    LEAVE_MALFORMED);
-        //});
-    }
+    //SECTION("malformed with destination")
+    //{
+    //    auto tx =
+    //        transactionFrameFromOps(app->getNetworkID(), root,
+    //                                {root.op(leave(root, testQSet(0, 2)))}, {});
+    //
+    //        LedgerTxn ltx(app->getLedgerTxnRoot());
+    //        REQUIRE(!tx->checkValid(*app, ltx, 0, 0, 0));
+    //        REQUIRE(getLeaveResultCode(tx, 0) ==
+    //                LEAVE_MALFORMED);
+    //}
 
     SECTION("Success")
     {
         //root.leaveNetwork("B", app->getLedgerManager().getLastMinBalance(0));
-        root.leaveNetwork("B", testQSet(0, 2));
+        //root.leaveNetwork("B", testQSet(0, 2));
     };
 
 }

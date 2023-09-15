@@ -348,10 +348,14 @@ LocalNode::computeSortedPowerSet(std::vector<NodeID> const& allValidators, int n
     return powerSet;
 }
 
-// when we find minimal quorums, do we need to confirm it is a minimal quorum for us?
-// what if it is just a minimal quorum for other nodes?
+// when we list minimal quorums, we need to confirm it is a minimal quorum for the checkedNode
 std::vector<std::vector<NodeID>>
-LocalNode::findMinQuorum(NodeID const& checkedNode, std::vector<NodeID> const& allValidators, stellar::QuorumTracker::QuorumMap const& qMap) {
+LocalNode::findMinQuorum(NodeID const& checkedNode, stellar::QuorumTracker::QuorumMap const& qMap) {
+//LocalNode::findMinQuorum(NodeID const& checkedNode, std::vector<NodeID> const& allValidators, stellar::QuorumTracker::QuorumMap const& qMap) {
+    std::vector<NodeID> allValidators;
+    for (const auto& pair : qMap) {
+        allValidators.emplace_back(pair.first);
+    }
     //list the powerset by cardinality order
     if(allValidators.size() != 0){
         auto sortedPowerset = computeSortedPowerSet(allValidators, allValidators.size());
@@ -402,6 +406,7 @@ bool
 LocalNode::leaveCheck(std::vector<std::vector<NodeID>> const& minQs,
                                  std::vector<NodeID> const& tomb, NodeID const& leavingNode)
 {
+    
     for(size_t i = 0; i < minQs.size(); ++i){
         for(size_t j = i + 1; j < minQs.size(); ++j){
             std::vector<NodeID> intersection;
