@@ -175,89 +175,6 @@ normalizeQSetSimplify(SCPQuorumSet& qSet, NodeID const* idToRemove)
     }
 }
 
-void
-deleteAndReplace(SCPQuorumSet& qSet, NodeID const* idToRemove, SCPQuorumSet& rSet)
-{
-    //using xdr::operator==;
-    auto& v = qSet.validators;
-    if (idToRemove)
-    {
-        //auto it_v = std::remove_if(v.begin(), v.end(), [&](NodeID const& n) {
-            //return n == *idToRemove;
-        //});
-        //qSet.threshold -= uint32(v.end() - it_v);
-        //v.erase(it_v, v.end());
-        
-        
-        //delete the idToRemove without changing the threshold
-        auto it = std::find(v.begin(), v.end(), *idToRemove);
-        if(it != v.end()){
-            v.erase(it);
-            //add the rSet to reaplce the deleted validator
-            qSet.innerSets.emplace_back(rSet);
-        }
-    }
-
-    auto& i = qSet.innerSets;
-    auto it = i.begin();
-    while (it != i.end())
-    {
-        deleteAndReplace(*it, idToRemove, rSet);
-        it++;
-    }
-    return;
-}
-
-
-// update the quorum slice so that the calculated quorum excludes the idToRemove
-//  * removes nodeID
-//      { t: n, v: { ...BEFORE... , nodeID, ...AFTER... }, ...}
-//      { t: n-1, v: { ...BEFORE..., ...AFTER...} , ... }
-// 
-SCPQuorumSet removeNodeQSet(SCPQuorumSet& qSet, NodeID const& idToRemove, stellar::QuorumTracker::QuorumMap const& qMap){
-    using xdr::operator==;
-    SCPQuorumSet leavingNodeQ;
-    bool idInMap = false;
-    for (const auto& pair : qMap) {
-        if (pair.first == idToRemove) {
-            idInMap = true;
-            leavingNodeQ = *(pair.second.mQuorumSet);
-            break; 
-        }
-    }
-    
-    if(!idInMap){
-        //delete the leaving node in qSet
-        normalizeQSetSimplify(qSet, &idToRemove);
-        return qSet;
-    }
-    
-    //delete the leaving node in it's own quorums
-    normalizeQSetSimplify(leavingNodeQ, &idToRemove);
-
-    //delete and replace the leaving node in qSet
-    deleteAndReplace(qSet, &idToRemove, leavingNodeQ);  
-    normalizeQSetSimplify(qSet, nullptr);  
-    return qSet;
-
-
-    //using xdr::operator==;
-    //auto& v = qSet.validators;
-    //auto it_v = std::remove_if(v.begin(), v.end(), [&](NodeID const& n) {
-    //    return n == idToRemove;
-    //});
-    //qSet.threshold -= uint32(v.end() - it_v);
-    //v.erase(it_v, v.end());
-
-    //auto& i = qSet.innerSets;
-    //auto it = i.begin();
-    //while (it != i.end())
-    //{
-    //    normalizeQSetSimplify(*it, *idToRemove);
-    //    it++;
-    //}
-}
-
 template <typename InputIt1, typename InputIt2, class Compare>
 int
 intLexicographicalCompare(InputIt1 first1, InputIt1 last1, InputIt2 first2,
@@ -349,10 +266,87 @@ normalizeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove)
     normalizeQuorumSetReorder(qSet);
 }
 
-//void
-//removeNodeQSetOut(SCPQuorumSet& qSet, NodeID const* idToRemove)
-//{
-    //removeNodeQSet(qSet, idToRemove);
-//}
+void
+deleteAndReplace(SCPQuorumSet& qSet, NodeID const* idToRemove, SCPQuorumSet& rSet)
+{
+    //using xdr::operator==;
+    auto& v = qSet.validators;
+    if (idToRemove)
+    {
+        //auto it_v = std::remove_if(v.begin(), v.end(), [&](NodeID const& n) {
+            //return n == *idToRemove;
+        //});
+        //qSet.threshold -= uint32(v.end() - it_v);
+        //v.erase(it_v, v.end());
+        
+        
+        //delete the idToRemove without changing the threshold
+        auto it = std::find(v.begin(), v.end(), *idToRemove);
+        if(it != v.end()){
+            v.erase(it);
+            //add the rSet to reaplce the deleted validator
+            qSet.innerSets.emplace_back(rSet);
+        }
+    }
+
+    auto& i = qSet.innerSets;
+    auto it = i.begin();
+    while (it != i.end())
+    {
+        deleteAndReplace(*it, idToRemove, rSet);
+        it++;
+    }
+    return;
+}
+
+
+// update the quorum slice so that the calculated quorum excludes the idToRemove
+// qSet is current node's quorum slices
+SCPQuorumSet removeNodeQSet(SCPQuorumSet const& qSetOriginal, NodeID const& idToRemove, stellar::QuorumTracker::QuorumMap const& qMap){
+    using xdr::operator==;
+    SCPQuorumSet leavingNodeQ;
+    SCPQuorumSet qSet = qSetOriginal;
+    bool idInMap = false;
+    //extract the leaving node's quorum from qMap for later operation
+    for (const auto& pair : qMap) {
+        if (pair.first == idToRemove) {
+            idInMap = true;
+            leavingNodeQ = *(pair.second.mQuorumSet);
+            break; 
+        }
+    }
+    
+    if(!idInMap){
+        //if the leaving node is not tracked by current node
+        //directly delete the leaving node in qSet
+        normalizeQSetSimplify(qSet, &idToRemove);
+        return qSet;
+    }
+    
+    //delete the leaving node in it's own quorums
+    normalizeQSetSimplify(leavingNodeQ, &idToRemove);
+
+    //delete and replace the leaving node in qSet
+    deleteAndReplace(qSet, &idToRemove, leavingNodeQ);  
+    normalizeQSetSimplify(qSet, nullptr);  
+    return qSet;
+
+
+    //using xdr::operator==;
+    //auto& v = qSet.validators;
+    //auto it_v = std::remove_if(v.begin(), v.end(), [&](NodeID const& n) {
+    //    return n == idToRemove;
+    //});
+    //qSet.threshold -= uint32(v.end() - it_v);
+    //v.erase(it_v, v.end());
+
+    //auto& i = qSet.innerSets;
+    //auto it = i.begin();
+    //while (it != i.end())
+    //{
+    //    normalizeQSetSimplify(*it, *idToRemove);
+    //    it++;
+    //}
+}
 
 }

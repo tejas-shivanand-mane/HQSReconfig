@@ -21,7 +21,7 @@ bool isQuorumSetSane(SCPQuorumSet const& qSet, bool extraChecks,
 void normalizeQSet(SCPQuorumSet& qSet, NodeID const* idToRemove = nullptr);
 
 // remove a node from the calculated minimal quorum by updating the quorum slice.
-SCPQuorumSet removeNodeQSet(SCPQuorumSet& qSet, NodeID const& idToRemove, stellar::QuorumTracker::QuorumMap const& qMap);
+SCPQuorumSet removeNodeQSet(SCPQuorumSet const& qSet, NodeID const& idToRemove, stellar::QuorumTracker::QuorumMap const& qMap);
 
 //void deleteAndReplace(SCPQuorumSet& qSet, NodeID const* idToRemove, SCPQuorumSet& rSet);
 }

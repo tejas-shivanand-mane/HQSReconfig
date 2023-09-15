@@ -35,7 +35,7 @@ TEST_CASE("leave", "[tx][leave]")
     // set up world
     auto root = TestAccount::createRoot(*app);
 
-    int64_t const txfee = app->getLedgerManager().getLastTxFee();
+    //int64_t const txfee = app->getLedgerManager().getLastTxFee();
     //int64_t const minBalance2 = app->getLedgerManager().getLastMinBalance(2) + 10 * txfee;
 
     //SECTION("malformed with destination")

@@ -24,9 +24,11 @@
 #include "xdr/Stellar-SCP.h"
 #include "xdr/Stellar-types.h"
 #include "herder/QuorumTracker.h"
+#include "herder/Herder.h"
+#include "herder/HerderImpl.h"
 #include "scp/SCP.h"
 #include <set>
-
+#include "util/Logging.h"
 #include "main/Application.h"
 
 namespace stellar
@@ -55,19 +57,26 @@ LeaveOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
     //We do not modify the ledger for leave operation
     //We need to update quorums, which is stored in app
     //destination is the leaving nodes's NodeID, qSet is the quorum system passed in 
+    //We use qSet.innnerSets.validators to store one minimal quorum 
     //the current tracked quorums slices are app.getHerder().getCurrentlyTrackedQuorum()
 
-    //the first step is to list all the minimal quorums of current node
+    //the first step is to list all the minimal quorums from qSet
     //std::vector<std::vector<NodeID>> minQs = stellar::LocalNode::findMinQuorum(getSourceID(), mLeave.qSet)
-    // perform leave check based on quorums passed in: need to extract the quorums
+    
     std::vector<std::vector<NodeID>> minQs;
     for(auto it : mLeave.qSet.innerSets){
         minQs.emplace_back(it.validators);
     }
-
+    // perform leave check based on extracted quorums from qSet
     std::vector<NodeID> emptyTomb;
     bool leaveResult = stellar::LocalNode::leaveCheck(minQs, emptyTomb, mLeave.destination);
     if(leaveResult){
+        //If the leave request is approved, remove mLeave.destination from current node's quorum slices
+        //double check whether the whether the local quorum can be updated with the cnstant key word
+        SCPQuorumSet updatedQ;
+        updatedQ = stellar::removeNodeQSet(static_cast<HerderImpl&>(app.getHerder()).getSCP().getLocalQuorumSet(), mLeave.destination, app.getHerder().getCurrentlyTrackedQuorum());
+        //update local quorum set
+        static_cast<HerderImpl&>(app.getHerder()).getSCP().updateLocalQuorumSet(updatedQ);
         innerResult().code(LEAVE_SUCCESS);
     }
     else{
