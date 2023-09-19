@@ -16,6 +16,20 @@
 #include "transactions/TransactionFrameBase.h"
 #include "transactions/TransactionUtils.h"
 #include "transactions/test/SponsorshipTestUtils.h"
+#include "transactions/LeaveOpFrame.h"
+#include "herder/HerderImpl.h"
+#include "herder/QuorumTracker.h"
+#include "scp/SCP.h"
+#include "xdr/Stellar-ledger.h"
+
+#include "scp/QuorumSetUtils.h"
+#include "scp/LocalNode.h"
+#include "util/XDROperators.h"
+#include "xdr/Stellar-SCP.h"
+#include "xdr/Stellar-types.h"
+#include "herder/Herder.h"
+#include <set>
+#include "util/Logging.h"
 
 using namespace stellar;
 using namespace stellar::txtest;
@@ -29,8 +43,112 @@ getLeaveResultCode(TransactionFrameBasePtr& tx, size_t i)
 
 TEST_CASE("leave", "[tx][leave]")
 {
-    VirtualClock clock;
-    auto app = createTestApplication(clock, getTestConfig());
+    //VirtualClock clock;
+    //auto app = createTestApplication(clock, getTestConfig(0, Config::TESTDB_ON_DISK_SQLITE));
+    Config cfg(getTestConfig(0, Config::TESTDB_ON_DISK_SQLITE));
+    cfg.MANUAL_CLOSE = false;
+
+    std::vector<SecretKey> otherKeys;
+    int const kKeysCount = 4;
+    for (int i = 0; i < kKeysCount; i++)
+    {
+        otherKeys.emplace_back(SecretKey::pseudoRandomForTesting());
+    }
+
+    auto buildQSet = [&](int i) {
+        SCPQuorumSet q;
+        q.threshold = 2;
+        q.validators.emplace_back(otherKeys[i].getPublicKey());
+        q.validators.emplace_back(otherKeys[i + 1].getPublicKey());
+        return q;
+    };
+
+    //for the current node {2, 3} 
+    cfg.QUORUM_SET = buildQSet(2);
+    //node 0: {0, 1}
+    auto qSet0 = buildQSet(0);
+    //node 1: {1, 2}
+    auto qSet1 = buildQSet(1);
+    //node 3: {3, 0}
+    SCPQuorumSet qSet3;
+    qSet3.threshold = 2;
+    qSet3.validators.emplace_back(otherKeys[3].getPublicKey());
+    qSet3.validators.emplace_back(otherKeys[0].getPublicKey());
+
+
+    auto clock = std::make_shared<VirtualClock>();
+    Application::pointer app = createTestApplication(*clock, cfg);
+
+    auto* herder = static_cast<HerderImpl*>(&app->getHerder());
+    auto* penEnvs = &herder->getPendingEnvelopes();
+
+    // allow SCP messages from other slots to be processed
+    herder->lostSync();
+
+    auto valSigner = SecretKey::pseudoRandomForTesting();
+
+    struct ValuesTxSet
+    {
+        Value mSignedV;
+        TxSetFrameConstPtr mTxSet;
+    };
+
+    auto recvEnvelope = [&](SCPEnvelope envelope, uint64 slotID,
+                            SecretKey const& k, SCPQuorumSet const& qSet,
+                            std::vector<ValuesTxSet> const& pp) {
+        // herder must want the TxSet before receiving it, so we are sending it
+        // fake envelope
+        envelope.statement.slotIndex = slotID;
+        auto qSetH = sha256(xdr::xdr_to_opaque(qSet));
+        envelope.statement.nodeID = k.getPublicKey();
+        envelope.signature = k.sign(xdr::xdr_to_opaque(
+            app->getNetworkID(), ENVELOPE_TYPE_SCP, envelope.statement));
+        herder->recvSCPEnvelope(envelope);
+        herder->recvSCPQuorumSet(qSetH, qSet);
+        for (auto& p : pp)
+        {
+            herder->recvTxSet(p.mTxSet->getContentsHash(), p.mTxSet);
+        }
+    };
+    auto recvNom = [&](uint64 slotID, SecretKey const& k,
+                       SCPQuorumSet const& qSet,
+                       std::vector<ValuesTxSet> const& pp) {
+        SCPEnvelope envelope;
+        envelope.statement.pledges.type(SCP_ST_NOMINATE);
+        auto& nom = envelope.statement.pledges.nominate();
+
+        std::set<Value> values;
+        for (auto& p : pp)
+        {
+            values.insert(p.mSignedV);
+        }
+        nom.votes.insert(nom.votes.begin(), values.begin(), values.end());
+        auto qSetH = sha256(xdr::xdr_to_opaque(qSet));
+        nom.quorumSetHash = qSetH;
+        recvEnvelope(envelope, slotID, k, qSet, pp);
+    };
+    auto makeValue = [&](int i) {
+        auto const& lcl = app->getLedgerManager().getLastClosedLedgerHeader();
+        auto txSet = TxSetFrame::makeEmpty(lcl);
+        StellarValue sv = herder->makeStellarValue(
+            txSet->getContentsHash(), lcl.header.scpValue.closeTime + i,
+            emptyUpgradeSteps, valSigner);
+        auto v = xdr::xdr_to_opaque(sv);
+        return ValuesTxSet{v, txSet};
+    };
+
+    auto vv = makeValue(1);
+
+    auto checkInQuorum = [&](std::set<int> ids) {
+        REQUIRE(
+            penEnvs->isNodeDefinitelyInQuorum(cfg.NODE_SEED.getPublicKey()));
+        for (int j = 0; j < kKeysCount; j++)
+        {
+            bool inQuorum = (ids.find(j) != ids.end());
+            REQUIRE(penEnvs->isNodeDefinitelyInQuorum(
+                        otherKeys[j].getPublicKey()) == inQuorum);
+        }
+    };
 
     // set up world
     auto root = TestAccount::createRoot(*app);
@@ -52,8 +170,34 @@ TEST_CASE("leave", "[tx][leave]")
 
     SECTION("Success")
     {
-        //root.leaveNetwork("B", app->getLedgerManager().getLastMinBalance(0));
-        //root.leaveNetwork("B", testQSet(0, 2));
+        recvNom(3, cfg.NODE_SEED, cfg.QUORUM_SET, {vv});
+        checkInQuorum({2, 3});
+        //expand 0, 1, 3
+        recvNom(3, otherKeys[3], qSet3, {vv});
+        checkInQuorum({0, 2, 3});
+        recvNom(3, otherKeys[0], qSet0, {vv});
+        checkInQuorum({0, 1, 2, 3});
+        recvNom(3, otherKeys[1], qSet1, {vv});
+        checkInQuorum({0, 1, 2, 3});
+
+
+        root.leaveNetwork("B", testQSet(0, 2));
+        //create a quorum set to store calculated minimal quorums based on the current process
+        SCPQuorumSet qSetMinQ;
+        qSetMinQ.threshold = 2;
+        qSetMinQ.validators.emplace_back(otherKeys[3].getPublicKey());
+        
+        std::vector<std::vector<NodeID>> minQs = stellar::LocalNode::findMinQuorum(cfg.NODE_SEED.getPublicKey(), herder->getCurrentlyTrackedQuorum());
+        for(auto it : minQs){
+            SCPQuorumSet defaultQ;
+            defaultQ.threshold = 2;
+            for(auto id: it){
+                defaultQ.validators.emplace_back(id);
+            }
+            qSetMinQ.innerSets.emplace_back(defaultQ);
+        }
+        //root.leaveNetwork(otherKeys[2], testQSet(0, 2));
+        root.leaveNetwork(otherKeys[2], qSetMinQ);
     };
 
 }
