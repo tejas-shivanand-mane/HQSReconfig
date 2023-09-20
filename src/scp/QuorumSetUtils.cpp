@@ -284,8 +284,20 @@ deleteAndReplace(SCPQuorumSet& qSet, NodeID const* idToRemove, SCPQuorumSet& rSe
         auto it = std::find(v.begin(), v.end(), *idToRemove);
         if(it != v.end()){
             v.erase(it);
-            //add the rSet to reaplce the deleted validator
-            qSet.innerSets.emplace_back(rSet);
+            //if the rSet only contains one element, it can be directly added to validator set instead of inner set
+            //if this element is already in validator, then decrease the threshold only
+            if(rSet.validators.size() == 1 && rSet.threshold == 1 && rSet.innerSets.size() == 0){
+                if(std::find(v.begin(), v.end(), rSet.validators.front()) != v.end()){
+                    qSet.threshold -= 1;
+                }
+                else{
+                    v.emplace_back(rSet.validators.front());
+                }
+            }
+            else{
+                //add the rSet to reaplce the deleted validator
+                qSet.innerSets.emplace_back(rSet);
+            }
         }
     }
 

@@ -72,13 +72,14 @@ LeaveOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
     bool leaveResult = stellar::LocalNode::leaveCheck(minQs, emptyTomb, mLeave.destination);
     if(leaveResult){
         //If the leave request is approved, remove mLeave.destination from current node's quorum slices
-        //double check whether the whether the local quorum can be updated with the constant key word
+        //double check whether the local quorum can be updated with the constant key word
         for(auto it : app.getHerder().getCurrentlyTrackedQuorum()){
             if(it.first == static_cast<HerderImpl&>(app.getHerder()).getSCP().getLocalNodeID()){
                 SCPQuorumSet updatedQ;
                 updatedQ = stellar::removeNodeQSet(static_cast<HerderImpl&>(app.getHerder()).getSCP().getLocalQuorumSet(), mLeave.destination, app.getHerder().getCurrentlyTrackedQuorum());
                 //update local quorum set
                 static_cast<HerderImpl&>(app.getHerder()).getSCP().updateLocalQuorumSet(updatedQ);
+                static_cast<HerderImpl&>(app.getHerder()).updateQMap(it.first, updatedQ);
             }
             else{
                 SCPQuorumSet updatedQ = stellar::removeNodeQSet(*(it.second.mQuorumSet), mLeave.destination, app.getHerder().getCurrentlyTrackedQuorum());
