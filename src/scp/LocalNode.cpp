@@ -361,6 +361,9 @@ LocalNode::findMinQuorum(NodeID const& checkedNode, stellar::QuorumTracker::Quor
         auto sortedPowerset = computeSortedPowerSet(allValidators, allValidators.size());
         std::vector<std::vector<NodeID>> minQ;
         for(auto subset : sortedPowerset){
+            if(subset.size() == 0){
+                continue;
+            }
             bool supersetForMinQ = false;
             for(auto q : minQ){
                 // The current considered set is a superset of some minimal quorum. Therefore, it cannot be a minimal quorum

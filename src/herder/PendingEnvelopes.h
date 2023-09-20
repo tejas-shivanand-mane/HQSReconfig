@@ -197,6 +197,8 @@ class PendingEnvelopes
 
     void rebuildQuorumTrackerState();
     QuorumTracker::QuorumMap const& getCurrentlyTrackedQuorum() const;
+    
+    void updateQMapE(NodeID const& id, SCPQuorumSet qSet);
 
     // updates internal state when an envelope was successfully processed
     void envelopeProcessed(SCPEnvelope const& env);

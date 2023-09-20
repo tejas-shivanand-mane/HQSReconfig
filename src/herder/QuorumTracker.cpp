@@ -186,6 +186,16 @@ QuorumTracker::rebuild(std::function<SCPQuorumSetPtr(NodeID const&)> lookup)
     }
 }
 
+void 
+QuorumTracker::updateQuorumMap(NodeID const& id, SCPQuorumSet qSet)
+{
+    auto it = mQuorum.find(id);
+    if(it != mQuorum.end()){
+        auto& nodeInfo = it->second;
+        nodeInfo.mQuorumSet = std::make_shared<SCPQuorumSet>(qSet);
+    }
+}
+
 QuorumTracker::QuorumMap const&
 QuorumTracker::getQuorum() const
 {

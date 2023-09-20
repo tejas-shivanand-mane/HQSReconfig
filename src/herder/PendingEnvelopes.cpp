@@ -828,6 +828,11 @@ PendingEnvelopes::getCurrentlyTrackedQuorum() const
     return mQuorumTracker.getQuorum();
 }
 
+void 
+PendingEnvelopes::updateQMapE(NodeID const& id, SCPQuorumSet qSet){
+    mQuorumTracker.updateQuorumMap(id, qSet);
+}
+
 void
 PendingEnvelopes::envelopeProcessed(SCPEnvelope const& env)
 {

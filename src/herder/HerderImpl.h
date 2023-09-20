@@ -172,6 +172,7 @@ class HerderImpl : public Herder
                                                     bool summary,
                                                     bool fullKeys) override;
     QuorumTracker::QuorumMap const& getCurrentlyTrackedQuorum() const override;
+    void updateQMap(NodeID const& id, SCPQuorumSet qSet);
 
     virtual StellarValue
     makeStellarValue(Hash const& txSetHash, uint64_t closeTime,

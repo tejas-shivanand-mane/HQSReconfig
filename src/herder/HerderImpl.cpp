@@ -1643,6 +1643,12 @@ HerderImpl::getCurrentlyTrackedQuorum() const
     return mPendingEnvelopes.getCurrentlyTrackedQuorum();
 }
 
+void
+HerderImpl::updateQMap(NodeID const& id, SCPQuorumSet qSet)
+{
+    mPendingEnvelopes.updateQMapE(id, qSet);
+}
+
 static Hash
 getQmapHash(QuorumTracker::QuorumMap const& qmap)
 {

@@ -72,6 +72,9 @@ class QuorumTracker : public NonMovableOrCopyable
     // rebuild the transitive quorum given a lookup function
     void rebuild(std::function<SCPQuorumSetPtr(NodeID const&)> lookup);
 
+    // update quorum map
+    void updateQuorumMap(NodeID const& id, SCPQuorumSet qSet);
+
     // returns the current known quorum
     QuorumMap const& getQuorum() const;
 

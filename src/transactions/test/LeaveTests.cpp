@@ -65,6 +65,7 @@ TEST_CASE("leave", "[tx][leave]")
 
     //for the current node {2, 3} 
     cfg.QUORUM_SET = buildQSet(2);
+    auto qSet2 = buildQSet(2);
     //node 0: {0, 1}
     auto qSet0 = buildQSet(0);
     //node 1: {1, 2}
@@ -171,6 +172,7 @@ TEST_CASE("leave", "[tx][leave]")
     SECTION("Success")
     {
         recvNom(3, cfg.NODE_SEED, cfg.QUORUM_SET, {vv});
+        recvNom(3, otherKeys[2], qSet2, {vv});
         checkInQuorum({2, 3});
         //expand 0, 1, 3
         recvNom(3, otherKeys[3], qSet3, {vv});
@@ -181,12 +183,11 @@ TEST_CASE("leave", "[tx][leave]")
         checkInQuorum({0, 1, 2, 3});
 
 
-        root.leaveNetwork("B", testQSet(0, 2));
+        //root.leaveNetwork("B", testQSet(0, 2));
+
         //create a quorum set to store calculated minimal quorums based on the current process
         SCPQuorumSet qSetMinQ;
         qSetMinQ.threshold = 2;
-        qSetMinQ.validators.emplace_back(otherKeys[3].getPublicKey());
-        
         std::vector<std::vector<NodeID>> minQs = stellar::LocalNode::findMinQuorum(cfg.NODE_SEED.getPublicKey(), herder->getCurrentlyTrackedQuorum());
         for(auto it : minQs){
             SCPQuorumSet defaultQ;
@@ -196,8 +197,16 @@ TEST_CASE("leave", "[tx][leave]")
             }
             qSetMinQ.innerSets.emplace_back(defaultQ);
         }
-        //root.leaveNetwork(otherKeys[2], testQSet(0, 2));
         root.leaveNetwork(otherKeys[2], qSetMinQ);
+
+        std::vector<std::vector<NodeID>> updatedMinQs = stellar::LocalNode::findMinQuorum(cfg.NODE_SEED.getPublicKey(), herder->getCurrentlyTrackedQuorum());
+        std::set<int> ids = {0, 1, 3};
+        for (int j = 0; j < kKeysCount; j++)
+        {
+            bool inQuorum = (ids.find(j) != ids.end());
+            bool inMinQ = (std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), otherKeys[j].getPublicKey()) != updatedMinQs[0].end());
+            REQUIRE(inMinQ == inQuorum);
+        }
     };
 
 }

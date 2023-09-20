@@ -301,7 +301,7 @@ deleteAndReplace(SCPQuorumSet& qSet, NodeID const* idToRemove, SCPQuorumSet& rSe
 
 
 // update the quorum slice so that the calculated quorum excludes the idToRemove
-// qSet is current node's quorum slices
+// qSetOriginal is current node's quorum slices
 SCPQuorumSet removeNodeQSet(SCPQuorumSet const& qSetOriginal, NodeID const& idToRemove, stellar::QuorumTracker::QuorumMap const& qMap){
     using xdr::operator==;
     SCPQuorumSet leavingNodeQ;
