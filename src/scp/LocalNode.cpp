@@ -52,10 +52,22 @@ LocalNode::updateQuorumSet(SCPQuorumSet const& qSet)
     mQSet = qSet;
 }
 
+void
+LocalNode::updateTombSet(std::set<NodeID> tSet)
+{
+    mTombSet = tSet;
+}
+
 SCPQuorumSet const&
 LocalNode::getQuorumSet()
 {
     return mQSet;
+}
+
+std::set<NodeID>
+LocalNode::getTombSet()
+{
+    return mTombSet;
 }
 
 Hash const&
@@ -420,7 +432,7 @@ LocalNode::isQuorumBlocking(std::vector<std::vector<NodeID>> const& minQs,
 //This is the intersection check performed in our paper.
 bool
 LocalNode::leaveCheck(std::vector<std::vector<NodeID>> const& minQs,
-                                 std::vector<NodeID> const& tomb, NodeID const& leavingNode)
+                                 std::set<NodeID> const& tomb, NodeID const& leavingNode)
 {
     
     for(size_t i = 0; i < minQs.size(); ++i){

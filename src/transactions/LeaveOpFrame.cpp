@@ -68,8 +68,9 @@ LeaveOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
         minQs.emplace_back(it.validators);
     }
     // perform leave check based on extracted quorums from qSet
-    std::vector<NodeID> emptyTomb;
-    bool leaveResult = stellar::LocalNode::leaveCheck(minQs, emptyTomb, mLeave.destination);
+    //std::vector<NodeID> emptyTomb;
+    std::set<NodeID> tomb = static_cast<HerderImpl&>(app.getHerder()).getSCP().getLocalNode()->getTombSet();
+    bool leaveResult = stellar::LocalNode::leaveCheck(minQs, tomb, mLeave.destination);
     if(leaveResult){
         //If the leave request is approved, remove mLeave.destination from current node's quorum slices
         //double check whether the local quorum can be updated with the constant key word
@@ -94,6 +95,11 @@ LeaveOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
         //updatedQ = stellar::removeNodeQSet(static_cast<HerderImpl&>(app.getHerder()).getSCP().getLocalQuorumSet(), mLeave.destination, app.getHerder().getCurrentlyTrackedQuorum());
         //update local quorum set
         //static_cast<HerderImpl&>(app.getHerder()).getSCP().updateLocalQuorumSet(updatedQ);
+
+        //add the left node in the tombset
+        tomb.emplace(mLeave.destination);
+        static_cast<HerderImpl&>(app.getHerder()).getSCP().getLocalNode()->updateTombSet(tomb);
+
         innerResult().code(LEAVE_SUCCESS);
     }
     else{

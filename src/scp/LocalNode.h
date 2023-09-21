@@ -26,6 +26,7 @@ class LocalNode
     const bool mIsValidator;
     SCPQuorumSet mQSet;
     Hash mQSetHash;
+    std::set<NodeID> mTombSet;
 
     // alternative qset used during externalize {{mNodeID}}
     Hash gSingleQSetHash;                      // hash of the singleton qset
@@ -40,8 +41,10 @@ class LocalNode
     NodeID const& getNodeID();
 
     void updateQuorumSet(SCPQuorumSet const& qSet);
+    void updateTombSet(std::set<NodeID> tSet);
 
     SCPQuorumSet const& getQuorumSet();
+    std::set<NodeID> getTombSet();
     Hash const& getQuorumSetHash();
     bool isValidator();
 
@@ -62,7 +65,7 @@ class LocalNode
     static bool isVBlocking(SCPQuorumSet const& qSet,
                             std::vector<NodeID> const& nodeSet);
 
-    // intersection test foe leave request
+    // intersection test for leave request
     static bool isQuorumPure(NodeID const& checkedNode, stellar::QuorumTracker::QuorumMap const& qMap,
                                  std::vector<NodeID> const& nodeSet);
     
@@ -74,7 +77,7 @@ class LocalNode
     static bool isQuorumBlocking(std::vector<std::vector<NodeID>> const& minQs,
                                  std::vector<NodeID> const& nodeSet);
     static bool leaveCheck(std::vector<std::vector<NodeID>> const& minQs,
-                                 std::vector<NodeID> const& tomb, NodeID const& leavingNode);
+                                 std::set<NodeID> const& tomb, NodeID const& leavingNode);
 
     // Tests this node against a map of nodeID -> T for the specified qSetHash.
 
