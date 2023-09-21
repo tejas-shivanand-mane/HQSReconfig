@@ -157,8 +157,9 @@ TEST_CASE("leave", "[tx][leave]")
     //int64_t const txfee = app->getLedgerManager().getLastTxFee();
     //int64_t const minBalance2 = app->getLedgerManager().getLastMinBalance(2) + 10 * txfee;
 
-    //SECTION("malformed with destination")
-    //{
+
+    SECTION("Leave request fail: no intersection")
+    {
     //    auto tx =
     //        transactionFrameFromOps(app->getNetworkID(), root,
     //                                {root.op(leave(root, testQSet(0, 2)))}, {});
@@ -167,7 +168,84 @@ TEST_CASE("leave", "[tx][leave]")
     //        REQUIRE(!tx->checkValid(*app, ltx, 0, 0, 0));
     //        REQUIRE(getLeaveResultCode(tx, 0) ==
     //                LEAVE_MALFORMED);
-    //}
+
+        //0: {0, 1}
+        SCPQuorumSet qSet01;
+        qSet01.threshold = 2;
+        qSet01.validators.emplace_back(otherKeys[0].getPublicKey());
+        qSet01.validators.emplace_back(otherKeys[1].getPublicKey());
+        //1: {1, 2}
+        SCPQuorumSet qSet12;
+        qSet12.threshold = 2;
+        qSet12.validators.emplace_back(otherKeys[1].getPublicKey());
+        qSet12.validators.emplace_back(otherKeys[2].getPublicKey());
+        //3: {2, 3}
+        SCPQuorumSet qSet23;
+        qSet23.threshold = 2;
+        qSet23.validators.emplace_back(otherKeys[2].getPublicKey());
+        qSet23.validators.emplace_back(otherKeys[3].getPublicKey());
+        //2: {2, 3}, {2, 0}
+        SCPQuorumSet qSet20;
+        qSet20.threshold = 2;
+        qSet20.validators.emplace_back(otherKeys[2].getPublicKey());
+        qSet20.validators.emplace_back(otherKeys[0].getPublicKey());
+        SCPQuorumSet qSet2Out;
+        qSet2Out.threshold = 2;
+        qSet2Out.validators.emplace_back(otherKeys[0].getPublicKey());
+        qSet2Out.validators.emplace_back(otherKeys[2].getPublicKey());
+        qSet2Out.validators.emplace_back(otherKeys[3].getPublicKey());
+        //qSet2Out.innerSets.emplace_back(qSet20);
+        //qSet2Out.innerSets.emplace_back(qSet23);
+        //self: {2}
+        SCPQuorumSet qSetSelf;
+        qSetSelf.threshold = 1;
+        qSetSelf.validators.emplace_back(otherKeys[2].getPublicKey());
+
+        cfg.QUORUM_SET = qSetSelf;
+        app.reset();
+        clock.reset();
+
+        clock = std::make_shared<VirtualClock>();
+        app = Application::create(*clock, cfg, false);
+        app->start();
+        herder = static_cast<HerderImpl*>(&app->getHerder());
+        penEnvs = &herder->getPendingEnvelopes();
+        herder->lostSync();
+
+        //receive self
+        auto vv2 = makeValue(2);
+        recvNom(3, cfg.NODE_SEED, qSetSelf, {vv, vv2});
+        recvNom(3, otherKeys[2], qSet2Out, {vv, vv2});
+        recvNom(3, otherKeys[3], qSet23, {vv, vv2});
+        recvNom(3, otherKeys[0], qSet01, {vv, vv2});
+        recvNom(3, otherKeys[1], qSet12, {vv, vv2});
+
+        std::vector<std::vector<NodeID>> minQTest = stellar::LocalNode::findMinQuorum(cfg.NODE_SEED.getPublicKey(), herder->getCurrentlyTrackedQuorum());
+        std::set<int> ids = {2, 3};
+        for (int j = 0; j < kKeysCount; j++)
+        {
+            bool inQuorum = (ids.find(j) != ids.end());
+            bool inMinQ = (std::find(minQTest[0].begin(), minQTest[0].end(), otherKeys[j].getPublicKey()) != minQTest[0].end());
+            REQUIRE(inMinQ == inQuorum);
+        }
+    
+        //create a quorum set to store calculated minimal quorums based on the current process
+        SCPQuorumSet qSetMinQ;
+        qSetMinQ.threshold = 2;
+        for(auto it : minQTest){
+            SCPQuorumSet defaultQ;
+            defaultQ.threshold = 2;
+            for(auto id: it){
+                defaultQ.validators.emplace_back(id);
+            }
+            qSetMinQ.innerSets.emplace_back(defaultQ);
+        }
+        auto root2 = TestAccount::createRoot(*app);
+        root2.leaveNetwork(otherKeys[2], qSetMinQ);
+        //auto tx = transactionFrameFromOps(app->getNetworkID(), root2,{root2.op(leave(otherKeys[2].getPublicKey(), qSetMinQ))}, {});
+        //REQUIRE(getLeaveResultCode(tx, 0) == LEAVE_MALFORMED);
+    }
+    
 
     SECTION("Success")
     {

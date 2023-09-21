@@ -356,21 +356,33 @@ LocalNode::findMinQuorum(NodeID const& checkedNode, stellar::QuorumTracker::Quor
     for (const auto& pair : qMap) {
         allValidators.emplace_back(pair.first);
     }
+    std::vector<std::vector<NodeID>> minQ;
     //list the powerset by cardinality order
     if(allValidators.size() != 0){
         auto sortedPowerset = computeSortedPowerSet(allValidators, allValidators.size());
-        std::vector<std::vector<NodeID>> minQ;
-        for(auto subset : sortedPowerset){
+        for(size_t i = 0; i < sortedPowerset.size(); i++){
+            std::vector<NodeID> subset = sortedPowerset[i];
             if(subset.size() == 0){
                 continue;
             }
             bool supersetForMinQ = false;
             for(auto q : minQ){
                 // The current considered set is a superset of some minimal quorum. Therefore, it cannot be a minimal quorum
-                if(std::includes(subset.begin(), subset.end(), q.begin(), q.end())){
+                for (const auto& e : q) {
+                    if (std::find(subset.begin(), subset.end(), e) == subset.end()) {
+                        supersetForMinQ = false;
+                        break; 
+                    }
                     supersetForMinQ = true;
+                }
+                if(supersetForMinQ){
                     break;
                 }
+
+                //if(std::includes(subset.begin(), subset.end(), q.begin(), q.end())){
+                    //supersetForMinQ = true;
+                    //break;
+                //}
             }
             // the current considered set is not a super set of any minimal quorum and is a quorum. 
             // Since any strict subset of the current considered set is not a quorum, the current set is a minimal quorum.
@@ -381,8 +393,9 @@ LocalNode::findMinQuorum(NodeID const& checkedNode, stellar::QuorumTracker::Quor
         return minQ;
     }
     else{
-        std::vector<std::vector<NodeID>> emptySet;
-        return emptySet;
+        //std::vector<std::vector<NodeID>> emptySet;
+        //return emptySet;
+        return minQ;
     }
 }
 
