@@ -59,7 +59,8 @@ enum OperationType
     SET_TRUST_LINE_FLAGS = 21,
     LIQUIDITY_POOL_DEPOSIT = 22,
     LIQUIDITY_POOL_WITHDRAW = 23,
-    LEAVE = 24
+    LEAVE = 24,
+    LEAVE_FOLLOWER = 25
 };
 
 /* CreateAccount
@@ -482,6 +483,19 @@ struct LeaveOp
     SCPQuorumSet qSet; // Quorums of the leaving process
 };
 
+/* LeaveFollower
+The current process issue leave request to its follower so that it can be removed.
+
+Threshold: med
+
+Result: LeaveFollowerResult
+
+*/
+struct LeaveFollowerOp
+{
+    AccountID destination; // Left process
+};
+
 /* An operation is the lowest unit of work that a transaction does */
 struct Operation
 {
@@ -542,6 +556,8 @@ struct Operation
         LiquidityPoolWithdrawOp liquidityPoolWithdrawOp;
     case LEAVE:
         LeaveOp leaveOp;
+    case LEAVE_FOLLOWER:
+        LeaveFollowerOp leaveFollowerOp;
     }
     body;
 };
@@ -1626,6 +1642,25 @@ case LEAVE_MALFORMED:
     void;
 };
 
+/******* LeaveFollower Result ********/
+
+enum LeaveFollowerResultCode
+{
+    // codes considered as "success" for the operation
+    LEAVE_FOLLOWER_SUCCESS = 0, // the leave follower request succeed
+
+    // codes considered as "failure" for the operation
+    LEAVE_FOLLOWER_MALFORMED = -1   // invalid destination
+};
+
+union LeaveFollowerResult switch (LeaveFollowerResultCode code)
+{
+case LEAVE_FOLLOWER_SUCCESS:
+    void;
+case LEAVE_FOLLOWER_MALFORMED:
+    void;
+};
+
 
 /* High level Operation Result */
 enum OperationResultCode
@@ -1695,6 +1730,8 @@ case opINNER:
         LiquidityPoolWithdrawResult liquidityPoolWithdrawResult;
     case LEAVE:
         LeaveResult leaveResult;
+    case LEAVE_FOLLOWER:
+        LeaveFollowerResult leaveFollowerResult;
     }
     tr;
 case opBAD_AUTH:
