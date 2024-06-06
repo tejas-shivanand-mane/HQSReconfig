@@ -85,6 +85,7 @@ LeaveOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
                 static_cast<HerderImpl&>(app.getHerder()).updateQMap(it.first, updatedQ);
             }
             else{
+                //remove leave node from other tracked quorum's slices so that after removal the leave node is not present in the local minimal quorum
                 SCPQuorumSet updatedQ = stellar::removeNodeQSet(*(it.second.mQuorumSet), mLeave.destination, app.getHerder().getCurrentlyTrackedQuorum());
                 //update quorum set for nodes in quorum map
                 static_cast<HerderImpl&>(app.getHerder()).updateQMap(it.first, updatedQ);
