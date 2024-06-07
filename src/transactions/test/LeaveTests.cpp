@@ -244,8 +244,8 @@ TEST_CASE("leave", "[tx][leave]")
         root2.leaveNetwork(otherKeys[2], qSetMinQ);
         std::set<NodeID> currentTomb = herder->getSCP().getLocalNode()->getTombSet();
         REQUIRE(currentTomb.find(otherKeys[2].getPublicKey()) == currentTomb.end());
-        REQUIRE(penEnvs->isNodeDefinitelyInQuorum(
-                        otherKeys[2].getPublicKey()) == true);
+        std::vector<std::vector<NodeID>> updatedMinQs = stellar::LocalNode::findMinQuorum(cfg.NODE_SEED.getPublicKey(), herder->getCurrentlyTrackedQuorum());
+        REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), otherKeys[2].getPublicKey()) != updatedMinQs[0].end());
         //auto tx = transactionFrameFromOps(app->getNetworkID(), root2,{root2.op(leave(otherKeys[2].getPublicKey(), qSetMinQ))}, {});
         //REQUIRE(getLeaveResultCode(tx, 0) == LEAVE_MALFORMED);
     }
@@ -291,8 +291,7 @@ TEST_CASE("leave", "[tx][leave]")
         }
         std::set<NodeID> currentTomb = herder->getSCP().getLocalNode()->getTombSet();
         REQUIRE(currentTomb.find(otherKeys[2].getPublicKey()) != currentTomb.end());
-        REQUIRE(penEnvs->isNodeDefinitelyInQuorum(
-                        otherKeys[2].getPublicKey()) == false);
+        REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), otherKeys[2].getPublicKey()) == updatedMinQs[0].end());
     };
 
 }
