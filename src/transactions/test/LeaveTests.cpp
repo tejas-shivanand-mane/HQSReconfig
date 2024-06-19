@@ -248,11 +248,30 @@ TEST_CASE("leave", "[tx][leave]")
         REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), otherKeys[2].getPublicKey()) != updatedMinQs[0].end());
         //auto tx = transactionFrameFromOps(app->getNetworkID(), root2,{root2.op(leave(otherKeys[2].getPublicKey(), qSetMinQ))}, {});
         //REQUIRE(getLeaveResultCode(tx, 0) == LEAVE_MALFORMED);
+
+        // test for normal transactions after leave operations
+        auto b1 = root2.create("B", app->getLedgerManager().getLastMinBalance(0));
+        REQUIRE_THROWS_AS(root2.create("B", app->getLedgerManager().getLastMinBalance(0)), ex_CREATE_ACCOUNT_ALREADY_EXIST);
     }
     
 
     SECTION("Success")
     {
+        SCPQuorumSet qSetSelf;
+        qSetSelf.threshold = 1;
+        qSetSelf.validators.emplace_back(otherKeys[2].getPublicKey());
+
+        cfg.QUORUM_SET = qSetSelf;
+        app.reset();
+        clock.reset();
+
+        clock = std::make_shared<VirtualClock>();
+        app = Application::create(*clock, cfg, false);
+        app->start();
+        herder = static_cast<HerderImpl*>(&app->getHerder());
+        penEnvs = &herder->getPendingEnvelopes();
+        herder->lostSync();
+
         recvNom(3, cfg.NODE_SEED, cfg.QUORUM_SET, {vv});
         recvNom(3, otherKeys[2], qSet2, {vv});
         checkInQuorum({2, 3});
@@ -292,6 +311,9 @@ TEST_CASE("leave", "[tx][leave]")
         std::set<NodeID> currentTomb = herder->getSCP().getLocalNode()->getTombSet();
         REQUIRE(currentTomb.find(otherKeys[2].getPublicKey()) != currentTomb.end());
         REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), otherKeys[2].getPublicKey()) == updatedMinQs[0].end());
-    };
 
+        // test for normal transactions after leave operations
+        auto b1 = root.create("B", app->getLedgerManager().getLastMinBalance(0));
+        REQUIRE_THROWS_AS(root.create("B", app->getLedgerManager().getLastMinBalance(0)), ex_CREATE_ACCOUNT_ALREADY_EXIST);
+    }
 }
