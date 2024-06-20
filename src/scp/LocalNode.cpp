@@ -135,11 +135,20 @@ LocalNode::getNack(std::tuple<NodeID, std::vector<NodeID>> key)
 bool 
 LocalNode::isAckNackComplete(std::tuple<NodeID, std::vector<NodeID>> key)
 {
-    for(auto it = mAck[key].begin(); it != mAck[key].end(); ++it){
-        if(mNack[key].find(*it) == mNack[key].end()){
+    // all the nodes in q_c have acked or nacked
+    for(auto it = std::get<1>(key).begin(); it != std::get<1>(key).end(); ++it){
+        bool completed = false;
+        if(mAck[key].find(*it) != mAck[key].end()){
+            completed = true;
+        }
+        if(mNack[key].find(*it) != mNack[key].end()){
+            completed = true;
+        }
+        if (!completed){
             return false;
         }
     }
+    return true;
 }
 
 Hash const&

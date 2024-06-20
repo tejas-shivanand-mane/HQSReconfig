@@ -298,7 +298,8 @@ TEST_CASE("leave", "[tx][leave]")
             }
             qSetMinQ.innerSets.emplace_back(defaultQ);
         }
-        root.leaveNetwork(otherKeys[2], qSetMinQ);
+        auto root3 = TestAccount::createRoot(*app);
+        root3.leaveNetwork(otherKeys[2], qSetMinQ);
 
         std::vector<std::vector<NodeID>> updatedMinQs = stellar::LocalNode::findMinQuorum(cfg.NODE_SEED.getPublicKey(), herder->getCurrentlyTrackedQuorum());
         std::set<int> ids = {0, 1, 3};
@@ -313,7 +314,7 @@ TEST_CASE("leave", "[tx][leave]")
         REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), otherKeys[2].getPublicKey()) == updatedMinQs[0].end());
 
         // test for normal transactions after leave operations
-        auto b1 = root.create("B", app->getLedgerManager().getLastMinBalance(0));
-        REQUIRE_THROWS_AS(root.create("B", app->getLedgerManager().getLastMinBalance(0)), ex_CREATE_ACCOUNT_ALREADY_EXIST);
+        auto b1 = root3.create("B", app->getLedgerManager().getLastMinBalance(0));
+        REQUIRE_THROWS_AS(root3.create("B", app->getLedgerManager().getLastMinBalance(0)), ex_CREATE_ACCOUNT_ALREADY_EXIST);
     }
 }

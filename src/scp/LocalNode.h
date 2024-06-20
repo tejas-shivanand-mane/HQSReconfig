@@ -94,8 +94,12 @@ class LocalNode
                                                             stellar::QuorumTracker::QuorumMap const& qMap);
     static bool isQuorumBlocking(std::vector<std::vector<NodeID>> const& minQs,
                                  std::vector<NodeID> const& nodeSet);
+    static bool isQuorumInclusion(std::vector<std::vector<NodeID>> const& minQs,
+                                 std::vector<NodeID> const& nodeSet);
     static bool leaveCheck(std::vector<std::vector<NodeID>> const& minQs,
                                  std::set<NodeID> const& tomb, NodeID const& leavingNode);
+    static bool addCheck(std::vector<std::vector<NodeID>> const& minQs,
+                                 std::vector<std::vector<NodeID>> const& tentative, std::vector<NodeID> const& q_c);
 
     // Tests this node against a map of nodeID -> T for the specified qSetHash.
 
