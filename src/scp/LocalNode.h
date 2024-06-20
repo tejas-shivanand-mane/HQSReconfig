@@ -7,6 +7,8 @@
 #include <memory>
 #include <set>
 #include <vector>
+#include <tuple>
+#include <map>
 
 #include "lib/json/json-forwards.h"
 #include "scp/SCPDriver.h"
@@ -27,6 +29,11 @@ class LocalNode
     SCPQuorumSet mQSet;
     Hash mQSetHash;
     std::set<NodeID> mTombSet;
+    // all the variable related to add use <p, q_c> as index
+    std::set<std::tuple<NodeID, std::vector<NodeID>>> mTentative;
+    std::map<std::tuple<NodeID, std::vector<NodeID>>, std::set<NodeID>> mAck;
+    std::map<std::tuple<NodeID, std::vector<NodeID>>, std::set<NodeID>> mNack;
+    std::map<std::tuple<NodeID, std::vector<NodeID>>, std::set<NodeID>> mFailed;
 
     // alternative qset used during externalize {{mNodeID}}
     Hash gSingleQSetHash;                      // hash of the singleton qset
@@ -42,9 +49,20 @@ class LocalNode
 
     void updateQuorumSet(SCPQuorumSet const& qSet);
     void updateTombSet(std::set<NodeID> tSet);
+    void addTentative(std::tuple<NodeID, std::vector<NodeID>> addT);
+    void removeTentative(std::tuple<NodeID, std::vector<NodeID>> removeT);
+    void addAck(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender);
+    void addNack(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender);
+    void removeAck(std::tuple<NodeID, std::vector<NodeID>> key);
+    void removeNack(std::tuple<NodeID, std::vector<NodeID>> key);
 
     SCPQuorumSet const& getQuorumSet();
     std::set<NodeID> getTombSet();
+    std::set<std::tuple<NodeID, std::vector<NodeID>>> getTentative();
+    std::vector<std::vector<NodeID>> getTentativeSet();
+    std::set<NodeID> getAck(std::tuple<NodeID, std::vector<NodeID>> key);
+    std::set<NodeID> getNack(std::tuple<NodeID, std::vector<NodeID>> key);
+    bool isAckNackComplete(std::tuple<NodeID, std::vector<NodeID>> key);
     Hash const& getQuorumSetHash();
     bool isValidator();
 

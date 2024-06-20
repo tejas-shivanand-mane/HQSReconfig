@@ -58,6 +58,40 @@ LocalNode::updateTombSet(std::set<NodeID> tSet)
     mTombSet = tSet;
 }
 
+void
+LocalNode::addTentative(std::tuple<NodeID, std::vector<NodeID>> addT)
+{
+    mTentative.insert(addT);
+}
+
+void
+LocalNode::removeTentative(std::tuple<NodeID, std::vector<NodeID>> removeT)
+{
+    mTentative.erase(removeT);
+}
+
+void 
+LocalNode::addAck(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender)
+{
+    mAck[key].insert(sender);
+
+}
+void 
+LocalNode::addNack(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender)
+{
+    mNack[key].insert(sender);
+}
+void 
+LocalNode::removeAck(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    mAck.erase(key);
+}
+void 
+LocalNode::removeNack(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    mNack.erase(key);
+}
+
 SCPQuorumSet const&
 LocalNode::getQuorumSet()
 {
@@ -68,6 +102,44 @@ std::set<NodeID>
 LocalNode::getTombSet()
 {
     return mTombSet;
+}
+
+std::set<std::tuple<NodeID, std::vector<NodeID>>>
+LocalNode::getTentative()
+{
+    return mTentative;
+}
+
+std::vector<std::vector<NodeID>>
+LocalNode::getTentativeSet()
+{
+    std::vector<std::vector<NodeID>> tentativeSet;
+    for(auto it : mTentative){
+        tentativeSet.emplace_back(std::get<1>(it));
+    }
+    return tentativeSet;
+}
+
+std::set<NodeID> 
+LocalNode::getAck(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    return mAck[key];
+}
+
+std::set<NodeID> 
+LocalNode::getNack(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    return mNack[key];
+}
+
+bool 
+LocalNode::isAckNackComplete(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    for(auto it = mAck[key].begin(); it != mAck[key].end(); ++it){
+        if(mNack[key].find(*it) == mNack[key].end()){
+            return false;
+        }
+    }
 }
 
 Hash const&
@@ -428,8 +500,23 @@ LocalNode::isQuorumBlocking(std::vector<std::vector<NodeID>> const& minQs,
     return true;
 }
 
+// inclusion check: check whether a quorum in minQs is a subset of nodeSet
+bool
+LocalNode::isQuorumInclusion(std::vector<std::vector<NodeID>> const& minQs,
+                                 std::vector<NodeID> const& nodeSet)
+{
+    for(auto q : minQs){
+        // if there exist q \in minQs such that q is a subset of nodeSet
+        bool isSubset = std::includes(nodeSet.begin(), nodeSet.end(), q.begin(), q.end());
+        if(isSubset){
+            return true;
+        }
+    }
+    return false;
+}
+
 //check whether a quorum system can let tombset and p leave
-//This is the intersection check performed in our paper.
+//This is the intersection check performed in our paper for leave.
 bool
 LocalNode::leaveCheck(std::vector<std::vector<NodeID>> const& minQs,
                                  std::set<NodeID> const& tomb, NodeID const& leavingNode)
@@ -453,6 +540,57 @@ LocalNode::leaveCheck(std::vector<std::vector<NodeID>> const& minQs,
             if(!isQuorumBlocking(minQs, intersection)){
                 return false;
             }
+        }
+    }
+    return true;
+}
+
+//check whether a quorum system can add qc considering the current tentative.
+//This is the intersection check performed in our paper for add.
+bool
+LocalNode::addCheck(std::vector<std::vector<NodeID>> const& minQs,
+                                 std::vector<std::vector<NodeID>> const& tentative, std::vector<NodeID> const& q_c)
+{
+    // first test the intersections between quorums in minQs and q_c
+    for(size_t i = 0; i < minQs.size(); ++i){
+        std::vector<NodeID> intersection;
+        std::set_intersection(minQs[i].begin(), minQs[i].end(), q_c.begin(), q_c.end(),
+                        std::back_inserter(intersection));
+        //TODO: this is for later when we combine leave and add
+        //for (auto element : tomb) {
+        //    auto it = std::find(intersection.begin(), intersection.end(), element);
+        //    if (it != intersection.end()) {
+        //        intersection.erase(it);
+        //    }
+        //}
+        //auto it = std::find(intersection.begin(), intersection.end(), leavingNode);
+        //    if (it != intersection.end()) {
+        //        intersection.erase(it);
+        //    }
+
+        if(!isQuorumBlocking(minQs, intersection)){
+            return false;
+        }
+    }
+    // Then test the intersections between tentative and q_c
+    for(size_t i = 0; i < tentative.size(); ++i){
+        std::vector<NodeID> intersection;
+        std::set_intersection(tentative[i].begin(), tentative[i].end(), q_c.begin(), q_c.end(),
+                        std::back_inserter(intersection));
+        //TODO: this is for later when we combine leave and add
+        //for (auto element : tomb) {
+        //    auto it = std::find(intersection.begin(), intersection.end(), element);
+        //    if (it != intersection.end()) {
+        //        intersection.erase(it);
+        //    }
+        //}
+        //auto it = std::find(intersection.begin(), intersection.end(), leavingNode);
+        //    if (it != intersection.end()) {
+        //        intersection.erase(it);
+        //    }
+
+        if(!isQuorumBlocking(minQs, intersection)){
+            return false;
         }
     }
     return true;
