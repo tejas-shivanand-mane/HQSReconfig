@@ -92,6 +92,10 @@ LoadGenerator::getMode(std::string const& mode)
     {
         return LoadGenMode::MIXED_TXS;
     }
+    else if (mode == "leave")
+    {
+        return LoadGenMode::LEAVE;
+    }
 #ifdef ENABLE_NEXT_PROTOCOL_VERSION_UNSAFE_FOR_PRODUCTION
     else if (mode == "soroban")
     {
@@ -427,6 +431,17 @@ LoadGenerator::generateLoad(GeneratedLoadConfig cfg)
                 };
             }
             break;
+            case LoadGenMode::LEAVE:
+            {
+                auto opCount = chooseOpCount(mApp.getConfig());
+                generateTx = [&, opCount]() {
+                    return leaveTransaction(cfg.nAccounts, cfg.offset,
+                                              ledgerNum, sourceAccountId,
+                                              2, cfg.reconfigNode.getPublicKey(), cfg.reconfigQ,
+                                              cfg.maxGeneratedFeeRate);
+                };
+            }
+            break;
 #ifdef ENABLE_NEXT_PROTOCOL_VERSION_UNSAFE_FOR_PRODUCTION
             case LoadGenMode::SOROBAN:
             {
@@ -753,6 +768,35 @@ LoadGenerator::paymentTransaction(uint32_t numAccounts, uint32_t offset,
 }
 
 std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
+LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
+                                  uint32_t ledgerNum, uint64_t sourceAccount,
+                                  uint32_t opCount,
+                                  PublicKey const& dest, SCPQuorumSet quorums,
+                                  std::optional<uint32_t> maxGeneratedFeeRate)
+{
+    TestAccountPtr to, from;
+    uint64_t amount = 1;
+    std::tie(from, to) =
+        pickAccountPair(numAccounts, offset, ledgerNum, sourceAccount);
+    vector<Operation> paymentOps;
+    paymentOps.reserve(opCount);
+    if opCount >= 2 {
+        for (uint32_t i = 0; i < opCount-2; ++i)
+        {
+            paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
+        }
+    }
+    
+    // add a leave operation and then a payment to the end 
+    paymentOps.emplace_back(txtest::leave(dest, quorums));
+    paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
+
+    return std::make_pair(from, createTransactionFramePtr(from, paymentOps,
+                                                          LoadGenMode::LEAVE,
+                                                          maxGeneratedFeeRate));
+}
+
+std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
 LoadGenerator::manageOfferTransaction(
     uint32_t ledgerNum, uint64_t accountId, uint32_t opCount,
     std::optional<uint32_t> maxGeneratedFeeRate)
@@ -1068,6 +1112,9 @@ LoadGenerator::execute(TransactionFramePtr& txf, LoadGenMode mode,
     case LoadGenMode::PRETEND:
         txm.mPretendOps.Mark(txf->getNumOperations());
         break;
+    case LoadGenMode::LEAVE:
+        txm.mLeaveOps.Mark(txf->getNumOperations());
+        break;
     case LoadGenMode::MIXED_TXS:
         if (txf->hasDexOperations())
         {
@@ -1120,7 +1167,7 @@ GeneratedLoadConfig::createAccountsLoad(uint32_t nAccounts, uint32_t txRate)
 GeneratedLoadConfig
 GeneratedLoadConfig::txLoad(LoadGenMode mode, uint32_t nAccounts, uint32_t nTxs,
                             uint32_t txRate, uint32_t offset,
-                            std::optional<uint32_t> maxFee)
+                            std::optional<uint32_t> maxFee, std::optional<Node> reconfigNode, std::optional<SCPQuorumSet> reconfigQ)
 {
     GeneratedLoadConfig cfg;
     cfg.mode = mode;
@@ -1129,6 +1176,11 @@ GeneratedLoadConfig::txLoad(LoadGenMode mode, uint32_t nAccounts, uint32_t nTxs,
     cfg.txRate = txRate;
     cfg.offset = offset;
     cfg.maxGeneratedFeeRate = maxFee;
+    if (mode == LoadGenMode::LEAVE)
+    {
+        cfg.reconfigNode = reconfigNode;
+        cfg.reconfigQ = reconfigQ;
+    }
     return cfg;
 }
 }

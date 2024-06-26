@@ -34,6 +34,95 @@ Topologies::pair(Simulation::Mode mode, Hash const& networkID,
 }
 
 Simulation::pointer
+Topologies::customLeaveSuccess(Simulation::Mode mode, Hash const& networkID,
+                    Simulation::ConfigGen confGen,
+                    Simulation::QuorumSetAdjuster qSetAdjust)
+{
+    Simulation::pointer s =
+        make_shared<Simulation>(mode, networkID, confGen, qSetAdjust);
+
+    enum kIDs
+    {
+        A = 0,
+        B,
+        C,
+        D
+    };
+    vector<SecretKey> keys;
+    for (int i = 0; i < 4; i++)
+    {
+        keys.push_back(
+            SecretKey::fromSeed(sha256("NODE_SEED_" + to_string(i))));
+    }
+    // A's qset: {A, B}
+    {
+        SCPQuorumSet q;
+        q.threshold = 2;
+        q.validators.emplace_back(keys[A].getPublicKey());
+        q.validators.emplace_back(keys[B].getPublicKey());
+        s->addNode(keys[A], q);
+    }
+    // B's qset: {A, B}, {B, C}
+    {
+        //outter set
+        SCPQuorumSet q;
+        q.threshold = 1;
+        //inner set
+        SCPQuorumSet q1;
+        q1.threshold = 2;
+        q1.validators.emplace_back(keys[B].getPublicKey());
+        q1.validators.emplace_back(keys[A].getPublicKey());
+        SCPQuorumSet q2;
+        q2.threshold = 2;
+        q2.validators.emplace_back(keys[B].getPublicKey());
+        q2.validators.emplace_back(keys[C].getPublicKey());
+        q.innerSets.emplace_back(q1);
+        q.innerSets.emplace_back(q2);
+        s->addNode(keys[B], q);
+    }
+    // C's qest: {B, C}
+    {
+        SCPQuorumSet q;
+        q.threshold = 2;
+        q.validators.emplace_back(keys[B].getPublicKey());
+        q.validators.emplace_back(keys[C].getPublicKey());
+        s->addNode(keys[C], q);
+    }
+    // D's qset: {C, D}, {A, D}
+    {
+        //outter set
+        SCPQuorumSet q;
+        q.threshold = 1;
+        //inner set
+        SCPQuorumSet q1;
+        q1.threshold = 2;
+        q1.validators.emplace_back(keys[C].getPublicKey());
+        q1.validators.emplace_back(keys[D].getPublicKey());
+        SCPQuorumSet q2;
+        q2.threshold = 2;
+        q2.validators.emplace_back(keys[A].getPublicKey());
+        q2.validators.emplace_back(keys[D].getPublicKey());
+        q.innerSets.emplace_back(q1);
+        q.innerSets.emplace_back(q2);
+        s->addNode(keys[D], q);
+    }
+
+    // create connections between nodes
+    auto nodes = s->getNodeIDs();
+    for (int i = 0; i < static_cast<int>(nodes.size()); i++)
+    {
+        auto from = nodes[i];
+        for (int j = i+1; j < static_cast<int>(nodes.size()); j++)
+        {
+            auto to = nodes[j];
+            s->addPendingConnection(from, to);
+            s->addPendingConnection(to, from);
+        }
+    }
+    return s;
+}
+
+Simulation::pointer
 Topologies::cycle4(Hash const& networkID, Simulation::ConfigGen confGen,
                    Simulation::QuorumSetAdjuster qSetAdjust)
 {

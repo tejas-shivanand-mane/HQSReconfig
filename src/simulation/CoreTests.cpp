@@ -428,6 +428,62 @@ TEST_CASE(
     LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("database"));
 }
 
+TEST_CASE(
+    "Leave test on 4 nodes: success",
+    "[simulation][leave]")
+{
+    Hash networkID = sha256(getTestConfig().NETWORK_PASSPHRASE);
+    //TODO: change the simulation to TCP connections
+    Simulation::pointer simulation =
+        Topologies::customLeaveSuccess(Simulation::OVER_LOOPBACK, networkID);
+
+    simulation->startAllNodes();
+    simulation->crankUntil(
+        [&]() { return simulation->haveAllExternalized(3, 1); },
+        2 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, false);
+
+    auto nodes = simulation->getNodes();
+    auto& app = *nodes[3]; // pick node D to generate load
+
+    auto& loadGen = app.getLoadGenerator();
+    loadGen.generateLoad(GeneratedLoadConfig::createAccountsLoad(
+        /* nAccounts */ 4,
+        /* txRate */ 10));
+
+    // get node D for leave operation
+    auto nodeIDs = simulation->getNodeIDs();
+    auto nodeD = nodeIDs[3];
+    auto qSetD = app.getConfig().QUORUM_SET;
+    try
+    {
+        simulation->crankUntil(
+            [&]() {
+                // we need to wait 4 rounds in case the tx don't propagate
+                // to the other nodes in time and the other node gets the
+                // nomination
+                return simulation->haveAllExternalized(5, 4) &&
+                       loadGen.checkAccountSynced(app, true).empty();
+            },
+            3 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, false);
+
+        loadGen.generateLoad(
+            GeneratedLoadConfig::txLoad(LoadGenMode::LEAVE, 4, 10, 10, 0U, std::nullopt, nodeD, qSetD));
+        simulation->crankUntil(
+            [&]() {
+                return simulation->haveAllExternalized(8, 4) &&
+                       loadGen.checkAccountSynced(app, false).empty();
+            },
+            2 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, true);
+    }
+    catch (...)
+    {
+        auto problems = loadGen.checkAccountSynced(app, false);
+        REQUIRE(problems.empty());
+    }
+
+    LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("database"));
+}
+
 Application::pointer
 newLoadTestApp(VirtualClock& clock)
 {

@@ -16,6 +16,11 @@ class Topologies
     pair(Simulation::Mode mode, Hash const& networkID,
          Simulation::ConfigGen confGen = nullptr,
          Simulation::QuorumSetAdjuster qSetAdjust = nullptr);
+    
+    // 4 nodes: {A, B, C, D} with the minimal quorum of {A, B}, {B, C}
+    customLeaveSuccess(Simulation::Mode mode, Hash const& networkID,
+                    Simulation::ConfigGen confGen = nullptr,
+                    Simulation::QuorumSetAdjuster qSetAdjust = nullptr);
 
     // cyclic network - each node has a qset with a neighbor
     static Simulation::pointer

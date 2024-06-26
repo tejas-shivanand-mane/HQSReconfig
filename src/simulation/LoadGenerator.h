@@ -32,6 +32,7 @@ enum class LoadGenMode
     PRETEND,
     // Mix of payments and DEX-related transactions.
     MIXED_TXS,
+    LEAVE,
 #ifdef ENABLE_NEXT_PROTOCOL_VERSION_UNSAFE_FOR_PRODUCTION
     SOROBAN
 #endif
@@ -44,9 +45,13 @@ struct GeneratedLoadConfig
 
     static GeneratedLoadConfig
     txLoad(LoadGenMode mode, uint32_t nAccounts, uint32_t nTxs, uint32_t txRate,
-           uint32_t offset = 0, std::optional<uint32_t> maxFee = std::nullopt);
+           uint32_t offset = 0, std::optional<uint32_t> maxFee = std::nullopt, 
+           std::optional<Node> reconfigNode = std::nullopt, 
+           std::optional<SCPQuorumSet> reconfigQ = std::nullopt);
 
     LoadGenMode mode = LoadGenMode::CREATE;
+    std::optional<Node> reconfigNode;
+    std::optional<SCPQuorumSet> reconfigQ; 
     uint32_t nAccounts = 0;
     uint32_t offset = 0;
     uint32_t nTxs = 0;
@@ -98,6 +103,7 @@ class LoadGenerator
         medida::Meter& mNativePayment;
         medida::Meter& mManageOfferOps;
         medida::Meter& mPretendOps;
+        medida::Meter& mLeaveOps;
         medida::Meter& mTxnAttempted;
         medida::Meter& mTxnRejected;
         medida::Meter& mTxnBytes;
@@ -194,6 +200,12 @@ class LoadGenerator
     manageOfferTransaction(uint32_t ledgerNum, uint64_t accountId,
                            uint32_t opCount,
                            std::optional<uint32_t> maxGeneratedFeeRate);
+    std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
+    leaveTransaction(uint32_t numAccounts, uint32_t offset,
+                    uint32_t ledgerNum, uint64_t sourceAccount,
+                    uint32_t opCount,
+                    PublicKey const& dest, SCPQuorumSet quorums,
+                    std::optional<uint32_t> maxGeneratedFeeRate);
 #ifdef ENABLE_NEXT_PROTOCOL_VERSION_UNSAFE_FOR_PRODUCTION
     std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
     sorobanTransaction(uint32_t numAccounts, uint32_t offset,
