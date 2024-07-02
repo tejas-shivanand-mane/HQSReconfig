@@ -46,11 +46,11 @@ struct GeneratedLoadConfig
     static GeneratedLoadConfig
     txLoad(LoadGenMode mode, uint32_t nAccounts, uint32_t nTxs, uint32_t txRate,
            uint32_t offset = 0, std::optional<uint32_t> maxFee = std::nullopt, 
-           std::optional<Node> reconfigNode = std::nullopt, 
+           std::optional<PublicKey> reconfigNode = std::nullopt, 
            std::optional<SCPQuorumSet> reconfigQ = std::nullopt);
 
     LoadGenMode mode = LoadGenMode::CREATE;
-    std::optional<Node> reconfigNode;
+    std::optional<PublicKey> reconfigNode;
     std::optional<SCPQuorumSet> reconfigQ; 
     uint32_t nAccounts = 0;
     uint32_t offset = 0;
@@ -204,7 +204,7 @@ class LoadGenerator
     leaveTransaction(uint32_t numAccounts, uint32_t offset,
                     uint32_t ledgerNum, uint64_t sourceAccount,
                     uint32_t opCount,
-                    PublicKey const& dest, SCPQuorumSet quorums,
+                    std::optional<PublicKey> dest, std::optional<SCPQuorumSet> quorums,
                     std::optional<uint32_t> maxGeneratedFeeRate);
 #ifdef ENABLE_NEXT_PROTOCOL_VERSION_UNSAFE_FOR_PRODUCTION
     std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>

@@ -433,11 +433,11 @@ LoadGenerator::generateLoad(GeneratedLoadConfig cfg)
             break;
             case LoadGenMode::LEAVE:
             {
-                auto opCount = chooseOpCount(mApp.getConfig());
-                generateTx = [&, opCount]() {
+                //auto opCount = chooseOpCount(mApp.getConfig());
+                generateTx = [&]() {
                     return leaveTransaction(cfg.nAccounts, cfg.offset,
                                               ledgerNum, sourceAccountId,
-                                              2, cfg.reconfigNode.getPublicKey(), cfg.reconfigQ,
+                                              2, cfg.reconfigNode, cfg.reconfigQ,
                                               cfg.maxGeneratedFeeRate);
                 };
             }
@@ -771,7 +771,7 @@ std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
 LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
                                   uint32_t ledgerNum, uint64_t sourceAccount,
                                   uint32_t opCount,
-                                  PublicKey const& dest, SCPQuorumSet quorums,
+                                  std:: optional<PublicKey> dest, std::optional<SCPQuorumSet> quorums,
                                   std::optional<uint32_t> maxGeneratedFeeRate)
 {
     TestAccountPtr to, from;
@@ -780,7 +780,7 @@ LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
         pickAccountPair(numAccounts, offset, ledgerNum, sourceAccount);
     vector<Operation> paymentOps;
     paymentOps.reserve(opCount);
-    if opCount >= 2 {
+    if (opCount >= 2) {
         for (uint32_t i = 0; i < opCount-2; ++i)
         {
             paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
@@ -1029,6 +1029,7 @@ LoadGenerator::TxMetrics::TxMetrics(medida::MetricsRegistry& m)
     , mNativePayment(m.NewMeter({"loadgen", "payment", "submitted"}, "op"))
     , mManageOfferOps(m.NewMeter({"loadgen", "manageoffer", "submitted"}, "op"))
     , mPretendOps(m.NewMeter({"loadgen", "pretend", "submitted"}, "op"))
+    , mLeaveOps(m.NewMeter({"loadgen", "leave", "submitted"}, "op"))
     , mTxnAttempted(m.NewMeter({"loadgen", "txn", "attempted"}, "txn"))
     , mTxnRejected(m.NewMeter({"loadgen", "txn", "rejected"}, "txn"))
     , mTxnBytes(m.NewMeter({"loadgen", "txn", "bytes"}, "txn"))
@@ -1167,7 +1168,7 @@ GeneratedLoadConfig::createAccountsLoad(uint32_t nAccounts, uint32_t txRate)
 GeneratedLoadConfig
 GeneratedLoadConfig::txLoad(LoadGenMode mode, uint32_t nAccounts, uint32_t nTxs,
                             uint32_t txRate, uint32_t offset,
-                            std::optional<uint32_t> maxFee, std::optional<Node> reconfigNode, std::optional<SCPQuorumSet> reconfigQ)
+                            std::optional<uint32_t> maxFee, std::optional<PublicKey> reconfigNode, std::optional<SCPQuorumSet> reconfigQ)
 {
     GeneratedLoadConfig cfg;
     cfg.mode = mode;

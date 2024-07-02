@@ -18,6 +18,7 @@ class Topologies
          Simulation::QuorumSetAdjuster qSetAdjust = nullptr);
     
     // 4 nodes: {A, B, C, D} with the minimal quorum of {A, B}, {B, C}
+    static Simulation::pointer
     customLeaveSuccess(Simulation::Mode mode, Hash const& networkID,
                     Simulation::ConfigGen confGen = nullptr,
                     Simulation::QuorumSetAdjuster qSetAdjust = nullptr);
