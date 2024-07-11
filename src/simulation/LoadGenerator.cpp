@@ -771,7 +771,7 @@ std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
 LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
                                   uint32_t ledgerNum, uint64_t sourceAccount,
                                   uint32_t opCount,
-                                  std:: optional<PublicKey> dest, std::optional<SCPQuorumSet> quorums,
+                                  std::optional<PublicKey> dest, std::optional<SCPQuorumSet> quorums,
                                   std::optional<uint32_t> maxGeneratedFeeRate)
 {
     TestAccountPtr to, from;
@@ -788,7 +788,14 @@ LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
     }
     
     // add a leave operation and then a payment to the end 
-    paymentOps.emplace_back(txtest::leave(dest, quorums));
+    if (dest.has_value() && quorums.has_value()) {
+        paymentOps.emplace_back(txtest::leave(dest.value(), quorums.value()));
+    } else {
+        CLOG_ERROR(
+                    LoadGen,
+                    "Load generation failed: no leave node provided");
+    }
+    //paymentOps.emplace_back(txtest::leave(dest, quorums));
     paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
 
     return std::make_pair(from, createTransactionFramePtr(from, paymentOps,

@@ -109,14 +109,14 @@ Topologies::customLeaveSuccess(Simulation::Mode mode, Hash const& networkID,
 
     // create connections between nodes
     auto nodes = s->getNodeIDs();
-    for (int i = 0; i < static_cast<int>(nodes.size()); i++)
+    for (int i = 0; i < static_cast<int>(nodes.size())-1; i++)
     {
         auto from = nodes[i];
         for (int j = i+1; j < static_cast<int>(nodes.size()); j++)
         {
             auto to = nodes[j];
             s->addPendingConnection(from, to);
-            s->addPendingConnection(to, from);
+            //s->addPendingConnection(to, from);
         }
     }
     return s;

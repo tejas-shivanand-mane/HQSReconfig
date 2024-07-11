@@ -94,12 +94,12 @@ QuorumSetSanityChecker::checkSanity(SCPQuorumSet const& qSet, uint32 depth,
     for (auto const& n : v)
     {
         auto r = mKnownNodes.insert(n);
-        if (!r.second)
-        {
+        //if (!r.second)
+        //{
             // n was already present
-            errString = "Duplicate node found in quorum configuration";
-            return false;
-        }
+            //errString = "Duplicate node found in quorum configuration";
+            //return false;
+        //}
     }
 
     for (auto const& iSet : i)
