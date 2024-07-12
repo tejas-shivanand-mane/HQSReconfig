@@ -26,6 +26,7 @@
 #include "xdrpp/autocheck.h"
 #include <fmt/format.h>
 #include <sstream>
+#include "scp/LocalNode.h"
 
 using namespace stellar;
 
@@ -443,7 +444,7 @@ TEST_CASE(
         2 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, false);
 
     auto nodes = simulation->getNodes();
-    auto& app = *nodes[3]; // pick node D to generate load
+    auto& app = *nodes[3]; // pick node B to generate load 
 
     auto& loadGen = app.getLoadGenerator();
     loadGen.generateLoad(GeneratedLoadConfig::createAccountsLoad(
@@ -452,8 +453,22 @@ TEST_CASE(
 
     // get node D for leave operation
     auto nodeIDs = simulation->getNodeIDs();
-    auto nodeD = nodeIDs[3];
-    auto qSetD = app.getConfig().QUORUM_SET;
+    auto nodeD = nodeIDs[0];
+    auto nodeB = nodeIDs[3];
+
+    auto* herderD = static_cast<HerderImpl*>(&nodes[0]->getHerder());
+    SCPQuorumSet qSetMinQD;
+    qSetMinQD.threshold = 1;
+    std::vector<std::vector<NodeID>> minQD = LocalNode::findMinQuorum(nodeD, herderD->getCurrentlyTrackedQuorum());
+    for(auto it : minQD){
+            SCPQuorumSet defaultQ;
+            defaultQ.threshold = 3;
+            for(auto id: it){
+                defaultQ.validators.emplace_back(id);
+            }
+            qSetMinQD.innerSets.emplace_back(defaultQ);
+    }
+
     try
     {
         simulation->crankUntil(
@@ -467,7 +482,7 @@ TEST_CASE(
             3 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, false);
 
         loadGen.generateLoad(
-            GeneratedLoadConfig::txLoad(LoadGenMode::LEAVE, 4, 10, 10, 0U, std::nullopt, nodeD, qSetD));
+            GeneratedLoadConfig::txLoad(LoadGenMode::LEAVE, 4, 10, 10, 0U, std::nullopt, nodeD, qSetMinQD));
         simulation->crankUntil(
             [&]() {
                 return simulation->haveAllExternalized(8, 4) &&
@@ -480,6 +495,13 @@ TEST_CASE(
         auto problems = loadGen.checkAccountSynced(app, false);
         REQUIRE(problems.empty());
     }
+
+    // test node B's tomb set includes node D
+    auto* herder = static_cast<HerderImpl*>(&nodes[3]->getHerder());
+    std::set<NodeID> tombB = herder->getSCP().getLocalNode()->getTombSet();
+    REQUIRE(tombB.find(nodeD) != tombB.end());
+    //std::vector<std::vector<NodeID>> updatedMinQs = LocalNode::findMinQuorum(nodeB, herder->getCurrentlyTrackedQuorum());
+    //REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), nodeD) == updatedMinQs[0].end());
 
     LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("database"));
 }
