@@ -33,6 +33,8 @@
 #include <fmt/format.h>
 #include <iomanip>
 #include <set>
+#include <chrono>
+#include <thread>
 
 namespace stellar
 {
@@ -312,7 +314,7 @@ LoadGenerator::generateLoad(GeneratedLoadConfig cfg)
     {
         mStartTime =
             std::make_unique<VirtualClock::time_point>(mApp.getClock().now());
-    }
+    } 
 
     createRootAccount();
 

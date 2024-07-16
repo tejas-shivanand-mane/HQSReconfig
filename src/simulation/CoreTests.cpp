@@ -482,7 +482,8 @@ TEST_CASE(
             3 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, false);
 
         loadGen.generateLoad(
-            GeneratedLoadConfig::txLoad(LoadGenMode::LEAVE, 4, 10, 10, 0U, std::nullopt, nodeD, qSetMinQD));
+            // number of accounts >= number of transactions
+            GeneratedLoadConfig::txLoad(LoadGenMode::LEAVE, 4, 4, 4, 0U, std::nullopt, nodeD, qSetMinQD));
         simulation->crankUntil(
             [&]() {
                 return simulation->haveAllExternalized(8, 4) &&
@@ -497,11 +498,11 @@ TEST_CASE(
     }
 
     // test node B's tomb set includes node D
-    auto* herder = static_cast<HerderImpl*>(&nodes[3]->getHerder());
-    std::set<NodeID> tombB = herder->getSCP().getLocalNode()->getTombSet();
+    auto* herderB = static_cast<HerderImpl*>(&nodes[3]->getHerder());
+    std::set<NodeID> tombB = herderB->getSCP().getLocalNode()->getTombSet();
     REQUIRE(tombB.find(nodeD) != tombB.end());
-    //std::vector<std::vector<NodeID>> updatedMinQs = LocalNode::findMinQuorum(nodeB, herder->getCurrentlyTrackedQuorum());
-    //REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), nodeD) == updatedMinQs[0].end());
+    std::vector<std::vector<NodeID>> updatedMinQs = LocalNode::findMinQuorum(nodeD, herderD->getCurrentlyTrackedQuorum());
+    REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), nodeD) == updatedMinQs[0].end());
 
     LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("database"));
 }
