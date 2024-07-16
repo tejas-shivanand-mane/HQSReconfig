@@ -501,8 +501,25 @@ TEST_CASE(
     auto* herderB = static_cast<HerderImpl*>(&nodes[3]->getHerder());
     std::set<NodeID> tombB = herderB->getSCP().getLocalNode()->getTombSet();
     REQUIRE(tombB.find(nodeD) != tombB.end());
+    // test node A's tomb set includes node D
+    auto* herderA = static_cast<HerderImpl*>(&nodes[1]->getHerder());
+    std::set<NodeID> tombA = herderA->getSCP().getLocalNode()->getTombSet();
+    REQUIRE(tombA.find(nodeD) != tombA.end());
+    // test node C's tomb set includes node D
+    auto* herderC = static_cast<HerderImpl*>(&nodes[2]->getHerder());
+    std::set<NodeID> tombC = herderC->getSCP().getLocalNode()->getTombSet();
+    REQUIRE(tombC.find(nodeD) != tombC.end());
+    // test node D's tomb set includes node D
+    std::set<NodeID> tombD = herderD->getSCP().getLocalNode()->getTombSet();
+    REQUIRE(tombD.find(nodeD) != tombD.end());
+
     std::vector<std::vector<NodeID>> updatedMinQs = LocalNode::findMinQuorum(nodeD, herderD->getCurrentlyTrackedQuorum());
-    REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), nodeD) == updatedMinQs[0].end());
+    for (auto it : updatedMinQs)
+    {
+        REQUIRE(std::find(it.begin(), it.end(), nodeD) == it.end());
+  
+    }
+    //REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), nodeD) == updatedMinQs[0].end());
 
     LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("database"));
 }
