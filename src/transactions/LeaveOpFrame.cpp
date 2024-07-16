@@ -103,6 +103,10 @@ LeaveOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
         tomb.emplace(mLeave.destination);
         static_cast<HerderImpl&>(app.getHerder()).getSCP().getLocalNode()->updateTombSet(tomb);
 
+        //For the leaving node itself, it should stop
+        if (mLeave.destination == static_cast<HerderImpl&>(app.getHerder()).getSCP().getLocalNodeID()){
+            app.gracefulStop();
+        }
         innerResult().code(LEAVE_SUCCESS);
     }
     else{
