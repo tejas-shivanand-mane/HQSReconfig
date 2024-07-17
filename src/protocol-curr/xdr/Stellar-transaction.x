@@ -60,7 +60,8 @@ enum OperationType
     LIQUIDITY_POOL_DEPOSIT = 22,
     LIQUIDITY_POOL_WITHDRAW = 23,
     LEAVE = 24,
-    LEAVE_FOLLOWER = 25
+    LEAVE_FOLLOWER = 25, 
+    ADD = 26
 };
 
 /* CreateAccount
@@ -496,6 +497,20 @@ struct LeaveFollowerOp
     AccountID destination; // Left process
 };
 
+/* Add
+The current process issues add a quorum request.
+
+Threshold: med
+
+Result: AddResult
+
+*/
+struct AddOp
+{
+    AccountID destination; // Requesting process
+    SCPQuorumSet qSet; // New quorum to be added is in the validators field
+};
+
 /* An operation is the lowest unit of work that a transaction does */
 struct Operation
 {
@@ -558,6 +573,8 @@ struct Operation
         LeaveOp leaveOp;
     case LEAVE_FOLLOWER:
         LeaveFollowerOp leaveFollowerOp;
+    case ADD:
+        AddOp addOp;
     }
     body;
 };
@@ -1661,6 +1678,24 @@ case LEAVE_FOLLOWER_MALFORMED:
     void;
 };
 
+/******* Add Result ********/
+
+enum AddResultCode
+{
+    // codes considered as "success" for the operation
+    ADD_SUCCESS = 0, // the add request succeed
+
+    // codes considered as "failure" for the operation
+    ADD_MALFORMED = -1   // invalid destination
+};
+
+union AddResult switch (AddResultCode code)
+{
+case ADD_SUCCESS:
+    void;
+case ADD_MALFORMED:
+    void;
+};
 
 /* High level Operation Result */
 enum OperationResultCode
@@ -1732,6 +1767,8 @@ case opINNER:
         LeaveResult leaveResult;
     case LEAVE_FOLLOWER:
         LeaveFollowerResult leaveFollowerResult;
+    case ADD:
+        AddResult addResult;
     }
     tr;
 case opBAD_AUTH:
