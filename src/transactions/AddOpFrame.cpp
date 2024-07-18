@@ -31,6 +31,9 @@
 #include <set>
 #include "util/Logging.h"
 #include "main/Application.h"
+#include "overlay/Peer.h"
+#include "overlay/OverlayManager.h"
+#include "overlay/OverlayManagerImpl.h"
 
 namespace stellar
 {
@@ -74,11 +77,14 @@ AddOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
         //If the new quorum contains the local node, do inclusion check
         std::vector<std::vector<NodeID>> minQs = stellar::LocalNode::findMinQuorum(localNodeID, herder.getCurrentlyTrackedQuorum());
         bool inclusionResult = stellar::LocalNode::isQuorumInclusion(minQs, newQ);
+        auto peers = static_cast<OverlayManagerImpl&>(app.getOverlayManager()).getAuthenticatedPeers();
         if(inclusionResult){
         //If the inclusion check pass, send ack message to requesting node
+            peers.find(localNodeID)->second->sendInclusion(true);
+            
         } else {
         //If the inclusion check fails, send nack message to requesting node
-
+            peers.find(localNodeID)->second->sendInclusion(false);
         }
     }
         

@@ -1635,7 +1635,7 @@ Peer:: sendInclusion(bool ackOrNack)
     ZoneScoped;
     StellarMessage m;
     m.type(INCLUSION);
-    m.inclusion().peerID = mApp.getHerder().get;
+    m.inclusion().peerID = mApp.getHerder()->getSCP().getLocalNodeID();
     m.inclusion().ackOrNack = ackOrNack;
     auto msgPtr = std::make_shared<StellarMessage const>(m);
     sendMessage(msgPtr);

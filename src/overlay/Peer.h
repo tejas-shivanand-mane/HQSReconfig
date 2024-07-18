@@ -75,6 +75,9 @@ class Peer : public std::enable_shared_from_this<Peer>,
     bool peerKnowsHash(Hash const& hash);
     typedef std::shared_ptr<Peer> pointer;
 
+    // In order to let add operation to access sendInclusion, we make it public
+    void sendInclusion(bool ackOrNack);
+
     enum PeerState
     {
         CONNECTING = 0,
@@ -250,7 +253,7 @@ class Peer : public std::enable_shared_from_this<Peer>,
     void recvSuccess(StellarMessage const& msg);
     void recvFail(StellarMessage const& msg);
 
-    void sendInclusion();
+    
     void sendGetCheckAdd();
     void sendCheckAdd();
     void sendGetCheck();
