@@ -1629,6 +1629,25 @@ Peer::recvGetPeers(StellarMessage const& msg)
     sendPeers();
 }
 
+void 
+Peer:: sendInclusion(bool ackOrNack)
+{
+    ZoneScoped;
+    StellarMessage m;
+    m.type(INCLUSION);
+    m.inclusion().peerID = mApp.getHerder().get;
+    m.inclusion().ackOrNack = ackOrNack;
+    auto msgPtr = std::make_shared<StellarMessage const>(m);
+    sendMessage(msgPtr);
+}
+
+void
+Peer::recvInclusion(StellarMessage const& msg)
+{
+    ZoneScoped;
+    sendPeers();
+}
+
 void
 Peer::recvPeers(StellarMessage const& msg)
 {

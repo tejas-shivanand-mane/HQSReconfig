@@ -53,6 +53,68 @@ struct Hello
     uint256 nonce;
 };
 
+// peerID is sender node's ID, requesterID is other node's ID
+// Inclusion check response from peerID
+// true: AckInclusion; false: NackInclusion
+struct Inclusion
+{
+    NodeID peerID;
+    bool ackOrNack;
+};
+
+// This is the CheckAdd message in add protocol
+// peerID: p (self), qSet: q_c
+struct GetCheckAdd
+{
+    NodeID peerID;
+    SCPQuorumSet qSet;
+};
+
+// This is the response for CheckAdd in the add protocol
+// true: Commit; false: Abort 
+// peerID: p' (self), requesterID: p
+struct CheckAdd
+{
+    NodeID peerID;
+    NodeID requesterID;
+    bool commitOrAbort;
+};
+
+// This is the Check in the add protocol
+// requesterID: p, peerID: p' (self)
+struct GetCheck
+{
+    NodeID requesterID;
+    NodeID peerID;
+    SCPQuorumSet qSet;
+};
+
+// This is the response for Check in the add protocol
+// true: CheckAck; false: CheckNack 
+// peerID: p_o (self), requesterID: p
+struct Check
+{
+    NodeID peerID;
+    NodeID requesterID;
+    bool ackOrNack;
+};
+
+// This is the Success message in add protocol
+// peerID: p (self), qSet: q_c
+struct Success 
+{
+    NodeID peerID;
+    SCPQuorumSet qSet;
+};
+
+// This is the Fail message in add protocol
+// peerID: p (self), qSet: q_c
+struct Fail 
+{
+    NodeID peerID;
+    SCPQuorumSet qSet;
+};
+
 // During the roll-out phrase, nodes can disable flow control in bytes.
 // Therefore, we need a way to communicate with other nodes
 // that we want/don't want flow control in bytes.
@@ -108,6 +170,15 @@ enum MessageType
     SCP_QUORUMSET = 10,
     SCP_MESSAGE = 11,
     GET_SCP_STATE = 12,
+
+    // Reconfiguration messages
+    INCLUSION = 21,
+    Get_CHECK_ADD = 22,
+    CHECK_ADD = 23,
+    GET_CHECK = 24,
+    CHECK = 25,
+    SUCCESS = 26,
+    FAIL = 27,
 
     // new messages
     HELLO = 13,
@@ -268,6 +339,20 @@ case SURVEY_REQUEST:
 
 case SURVEY_RESPONSE:
     SignedSurveyResponseMessage signedSurveyResponseMessage;
+
+// reconfig messages
+case INCLUSION:
+    Inclusion inclusion;
+case Get_CHECK_ADD:
+    GetCheckAdd getCheckAdd;
+case CHECK_ADD:
+    CheckAdd checkAdd;
+case GET_CHECK:
+    GetCheck getCheck;
+case SUCCESS:
+    Success success;
+case FAIL:
+    Fail fail;
 
 // SCP
 case GET_SCP_QUORUMSET:

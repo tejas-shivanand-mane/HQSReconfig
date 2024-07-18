@@ -242,6 +242,22 @@ class Peer : public std::enable_shared_from_this<Peer>,
     void recvFloodAdvert(StellarMessage const& msg);
     void recvFloodDemand(StellarMessage const& msg);
 
+    void recvInclusion(StellarMessage const& msg);
+    void recvGetCheckAdd(StellarMessage const& msg);
+    void recvCheckAdd(StellarMessage const& msg);
+    void recvGetCheck(StellarMessage const& msg);
+    void recvCheck(StellarMessage const& msg);
+    void recvSuccess(StellarMessage const& msg);
+    void recvFail(StellarMessage const& msg);
+
+    void sendInclusion();
+    void sendGetCheckAdd();
+    void sendCheckAdd();
+    void sendGetCheck();
+    void sendCheck();
+    void sendSuccess();
+    void sendFail();
+
     void sendHello();
     void sendAuth();
     void sendSCPQuorumSet(SCPQuorumSetPtr qSet);
