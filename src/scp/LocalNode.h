@@ -101,6 +101,9 @@ class LocalNode
     static bool addCheck(std::vector<std::vector<NodeID>> const& minQs,
                                  std::vector<std::vector<NodeID>> const& tentative, std::vector<NodeID> const& q_c);
 
+    // returns the union of all quorums
+    static std::set<NodeID> getQuorumUnion(NodeID const& nodeID, stellar::QuorumTracker::QuorumMap const& qMap);
+
     // Tests this node against a map of nodeID -> T for the specified qSetHash.
 
     // `isVBlocking` tests if the filtered nodes V are a v-blocking set for

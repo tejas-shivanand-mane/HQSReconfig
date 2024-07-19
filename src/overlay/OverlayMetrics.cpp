@@ -62,6 +62,8 @@ OverlayMetrics::OverlayMetrics(Application& app)
       // reconfig timers
     , mRecvInclusionTimer(
           app.getMetrics().NewTimer({"overlay", "recv", "inclusion"}))
+    , mRecvGetCheckAddTimer(
+          app.getMetrics().NewTimer({"overlay", "recv", "check-add"}))
 
     , mRecvSCPPrepareTimer(
           app.getMetrics().NewTimer({"overlay", "recv", "scp-prepare"}))
@@ -107,6 +109,12 @@ OverlayMetrics::OverlayMetrics(Application& app)
           app.getMetrics().NewMeter({"overlay", "send", "error"}, "message"))
     , mSendHelloMeter(
           app.getMetrics().NewMeter({"overlay", "send", "hello"}, "message"))
+    , mSendInclusionMeter(
+          app.getMetrics().NewMeter({"overlay", "send", "inclusion"}, "message"))
+    , mSendCheckAddMeter(
+          app.getMetrics().NewMeter({"overlay", "send", "check-add"}, "message"))
+    , mSendCheckMeter(
+          app.getMetrics().NewMeter({"overlay", "send", "check"}, "message"))
     , mSendAuthMeter(
           app.getMetrics().NewMeter({"overlay", "send", "auth"}, "message"))
     , mSendDontHaveMeter(app.getMetrics().NewMeter(

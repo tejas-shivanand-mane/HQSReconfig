@@ -247,7 +247,7 @@ class Peer : public std::enable_shared_from_this<Peer>,
     void recvFloodDemand(StellarMessage const& msg);
 
     void recvInclusion(StellarMessage const& msg);
-    //void recvGetCheckAdd(StellarMessage const& msg);
+    void recvGetCheckAdd(StellarMessage const& msg);
     //void recvCheckAdd(StellarMessage const& msg);
     //void recvGetCheck(StellarMessage const& msg);
     //void recvCheck(StellarMessage const& msg);
@@ -255,9 +255,9 @@ class Peer : public std::enable_shared_from_this<Peer>,
     //void recvFail(StellarMessage const& msg);
 
     
-    //void sendGetCheckAdd();
+    void sendGetCheckAdd(NodeID const& pID, std::vector<NodeID> const& qn);
     //void sendCheckAdd();
-    //void sendGetCheck();
+    void sendGetCheck(NodeID const& pID, NodeID const& rID, std::vector<NodeID> const& qn);
     //void sendCheck();
     //void sendSuccess();
     //void sendFail();

@@ -492,6 +492,16 @@ LocalNode::findMinQuorum(NodeID const& checkedNode, stellar::QuorumTracker::Quor
     }
 }
 
+static std::set<NodeID> getQuorumUnion(NodeID const& nodeID, stellar::QuorumTracker::QuorumMap const& qMap) {
+    std::set<NodeID> quorumUnion;
+    for (auto minQs: findMinQuorum(nodeID, qMap)) {
+        for (auto p: minQs) {
+            quorumUnion.insert(p);
+        }
+    }
+    return quorumUnion;
+}
+
 // check whether a nodeSet is quorum blocking
 bool
 LocalNode::isQuorumBlocking(std::vector<std::vector<NodeID>> const& minQs,

@@ -53,6 +53,8 @@ struct OverlayMetrics
     medida::Timer& mRecvSendMoreTimer;
 
     medida::Timer& mRecvInclusionTimer;
+    medida::Timer& mRecvGetCheckAddTimer;
+    //medida::Timer& mRecvGetCheckTimer;
 
     medida::Timer& mRecvSCPPrepareTimer;
     medida::Timer& mRecvSCPConfirmTimer;
@@ -91,6 +93,10 @@ struct OverlayMetrics
     medida::Meter& mSendSCPMessageSetMeter;
     medida::Meter& mSendGetSCPStateMeter;
     medida::Meter& mSendSendMoreMeter;
+
+    medida::Meter& mSendInclusionMeter;
+    medida::Meter& mSendCheckAddMeter;
+    medida::Meter& mSendCheckMeter;
 
     medida::Meter& mSendSurveyRequestMeter;
     medida::Meter& mSendSurveyResponseMeter;

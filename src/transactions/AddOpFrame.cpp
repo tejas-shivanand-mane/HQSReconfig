@@ -74,6 +74,10 @@ AddOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
         }
     }
     if (inNewQ) {
+        // for the requesting node, initialize entries in ack and nack maps
+        //if mAdd.destination == localNodeID {
+        //    herder.getLocalNode().addTentative(std::make_tuple(localNodeID, newQ));
+        //}
         //If the new quorum contains the local node, do inclusion check
         std::vector<std::vector<NodeID>> minQs = stellar::LocalNode::findMinQuorum(localNodeID, herder.getCurrentlyTrackedQuorum());
         bool inclusionResult = stellar::LocalNode::isQuorumInclusion(minQs, newQ);

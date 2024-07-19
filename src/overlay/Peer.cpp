@@ -1670,15 +1670,69 @@ Peer::recvInclusion(StellarMessage const& msg)
 
     if (herder.getSCP().getLocalNode()->isAckNackComplete(keyTuple)) {
         // if ack and nack are complete, check whether nack is empty.
-        if (herder.getSCP().getLocalNode()->getNack(keyTuple).empty()) {
+        auto nack = herder.getSCP().getLocalNode()->getNack(keyTuple);
+        if (nack.empty()) {
             // if nack is empty, the add operation complete successfully
             // we add qn to the local node's quorum set and remove keyTuple from ack and nack
             herder.getSCP().getLocalNode()->removeAck(keyTuple);
             herder.getSCP().getLocalNode()->removeNack(keyTuple);
         } else {
-
+            auto localNodeID = herder.getSCP().getLocalNodeID();
+            //otherwise nack contains the q_c that we need to send GetCheckAdd
+            std::vector<NodeID> vectorNack;
+            // Convert std::set<stellar::PublicKey> to std::vector<NodeID>
+            for (const auto& key : nack) {
+                vectorNack.push_back(key);
+            }
+            for (NodeID const& p : nack) {
+                sendGetCheckAdd(localNodeID, vectorNack);
+            }
         }
     } 
+}
+
+void 
+Peer:: sendGetCheckAdd(NodeID const& pID, std::vector<NodeID> const& qn)
+{
+    ZoneScoped;
+    StellarMessage m;
+    m.type(Get_CHECK_ADD);
+    m.getCheckAdd().peerID = pID;
+    for (auto it : qn) {
+        m.getCheckAdd().qSet.push_back(it);
+    }
+    auto msgPtr = std::make_shared<StellarMessage const>(m);
+    sendMessage(msgPtr);
+}
+
+void
+Peer::recvGetCheckAdd(StellarMessage const& msg)
+{
+    ZoneScoped;
+    auto& herder = static_cast<HerderImpl&>(mApp.getHerder());
+    auto keyTuple = std::make_tuple(msg.getCheckAdd().peerID, msg.getCheckAdd().qSet);
+    herder.getSCP().getLocalNode()->addTentative(keyTuple);
+    // send GetCheck to all the nodes in the quorums
+    auto localNodeID = herder.getSCP().getLocalNodeID();
+    auto localQuorum = herder.getCurrentlyTrackedQuorum();
+    for (auto p : herder.getSCP().getLocalNode()->getQuorumUnion(localNodeID, localQuorum)) {
+        sendGetCheck(localNodeID, msg.getCheckAdd().peerID, msg.getCheckAdd().qSet);
+    }
+}
+
+void 
+Peer:: sendGetCheck(NodeID const& pID, NodeID const& rID, std::vector<NodeID> const& qn)
+{
+    ZoneScoped;
+    StellarMessage m;
+    m.type(GET_CHECK);
+    m.getCheck().peerID = pID;
+    m.getCheck().requesterID = rID;
+    for (auto it : qn) {
+        m.getCheck().qSet.push_back(it);
+    }
+    auto msgPtr = std::make_shared<StellarMessage const>(m);
+    sendMessage(msgPtr);
 }
 
 void
