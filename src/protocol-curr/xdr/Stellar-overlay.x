@@ -56,10 +56,13 @@ struct Hello
 // peerID is sender node's ID, requesterID is other node's ID
 // Inclusion check response from peerID
 // true: AckInclusion; false: NackInclusion
+// peerID: p' (self), requesterID: p, qSet: q_n 
 struct Inclusion
 {
     NodeID peerID;
+    NodeID requesterID;
     bool ackOrNack;
+    NodeID qSet<>;
 };
 
 // This is the CheckAdd message in add protocol
@@ -67,36 +70,38 @@ struct Inclusion
 struct GetCheckAdd
 {
     NodeID peerID;
-    SCPQuorumSet qSet;
+    NodeID qSet<>;
 };
 
 // This is the response for CheckAdd in the add protocol
 // true: Commit; false: Abort 
-// peerID: p' (self), requesterID: p
+// peerID: p' (self), requesterID: p, qSet: q_c
 struct CheckAdd
 {
     NodeID peerID;
     NodeID requesterID;
     bool commitOrAbort;
+    NodeID qSet<>;
 };
 
 // This is the Check in the add protocol
-// requesterID: p, peerID: p' (self)
+// requesterID: p, peerID: p' (self), qSet: q_c
 struct GetCheck
 {
     NodeID requesterID;
     NodeID peerID;
-    SCPQuorumSet qSet;
+    NodeID qSet<>;
 };
 
 // This is the response for Check in the add protocol
 // true: CheckAck; false: CheckNack 
-// peerID: p_o (self), requesterID: p
+// peerID: p_o (self), requesterID: p, qSet: q_c
 struct Check
 {
     NodeID peerID;
     NodeID requesterID;
     bool ackOrNack;
+    NodeID qSet<>;
 };
 
 // This is the Success message in add protocol
@@ -104,7 +109,7 @@ struct Check
 struct Success 
 {
     NodeID peerID;
-    SCPQuorumSet qSet;
+    NodeID qSet<>;
 };
 
 // This is the Fail message in add protocol
@@ -112,7 +117,7 @@ struct Success
 struct Fail 
 {
     NodeID peerID;
-    SCPQuorumSet qSet;
+    NodeID qSet<>;
 };
 
 // During the roll-out phrase, nodes can disable flow control in bytes.

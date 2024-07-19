@@ -59,6 +59,9 @@ OverlayMetrics::OverlayMetrics(Application& app)
           app.getMetrics().NewTimer({"overlay", "recv", "get-scp-state"}))
     , mRecvSendMoreTimer(
           app.getMetrics().NewTimer({"overlay", "recv", "send-more"}))
+      // reconfig timers
+    , mRecvInclusionTimer(
+          app.getMetrics().NewTimer({"overlay", "recv", "inclusion"}))
 
     , mRecvSCPPrepareTimer(
           app.getMetrics().NewTimer({"overlay", "recv", "scp-prepare"}))

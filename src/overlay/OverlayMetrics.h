@@ -52,6 +52,8 @@ struct OverlayMetrics
     medida::Timer& mRecvGetSCPStateTimer;
     medida::Timer& mRecvSendMoreTimer;
 
+    medida::Timer& mRecvInclusionTimer;
+
     medida::Timer& mRecvSCPPrepareTimer;
     medida::Timer& mRecvSCPConfirmTimer;
     medida::Timer& mRecvSCPNominateTimer;

@@ -16,6 +16,7 @@
 #include "util/RandomEvictionCache.h"
 #include "util/Timer.h"
 #include "xdrpp/message.h"
+#include "scp/LocalNode.h"
 
 namespace stellar
 {
@@ -76,7 +77,7 @@ class Peer : public std::enable_shared_from_this<Peer>,
     typedef std::shared_ptr<Peer> pointer;
 
     // In order to let add operation to access sendInclusion, we make it public
-    void sendInclusion(bool ackOrNack);
+    void sendInclusion(bool ackOrNack, NodeID const& rID, std::vector<NodeID> const& qn, NodeID const& pID);
 
     enum PeerState
     {
@@ -246,20 +247,20 @@ class Peer : public std::enable_shared_from_this<Peer>,
     void recvFloodDemand(StellarMessage const& msg);
 
     void recvInclusion(StellarMessage const& msg);
-    void recvGetCheckAdd(StellarMessage const& msg);
-    void recvCheckAdd(StellarMessage const& msg);
-    void recvGetCheck(StellarMessage const& msg);
-    void recvCheck(StellarMessage const& msg);
-    void recvSuccess(StellarMessage const& msg);
-    void recvFail(StellarMessage const& msg);
+    //void recvGetCheckAdd(StellarMessage const& msg);
+    //void recvCheckAdd(StellarMessage const& msg);
+    //void recvGetCheck(StellarMessage const& msg);
+    //void recvCheck(StellarMessage const& msg);
+    //void recvSuccess(StellarMessage const& msg);
+    //void recvFail(StellarMessage const& msg);
 
     
-    void sendGetCheckAdd();
-    void sendCheckAdd();
-    void sendGetCheck();
-    void sendCheck();
-    void sendSuccess();
-    void sendFail();
+    //void sendGetCheckAdd();
+    //void sendCheckAdd();
+    //void sendGetCheck();
+    //void sendCheck();
+    //void sendSuccess();
+    //void sendFail();
 
     void sendHello();
     void sendAuth();

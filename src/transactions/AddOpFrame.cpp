@@ -80,11 +80,11 @@ AddOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
         auto peers = static_cast<OverlayManagerImpl&>(app.getOverlayManager()).getAuthenticatedPeers();
         if(inclusionResult){
         //If the inclusion check pass, send ack message to requesting node
-            peers.find(localNodeID)->second->sendInclusion(true);
+            peers.find(localNodeID)->second->sendInclusion(true, mAdd.destination, mAdd.qSet.validators, localNodeID);
             
         } else {
         //If the inclusion check fails, send nack message to requesting node
-            peers.find(localNodeID)->second->sendInclusion(false);
+            peers.find(localNodeID)->second->sendInclusion(false, mAdd.destination, mAdd.qSet.validators, localNodeID);
         }
     }
         

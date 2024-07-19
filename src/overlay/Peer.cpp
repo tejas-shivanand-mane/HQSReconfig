@@ -11,6 +11,7 @@
 #include "crypto/SHA.h"
 #include "database/Database.h"
 #include "herder/Herder.h"
+#include "herder/HerderImpl.h"
 #include "herder/TxSetFrame.h"
 #include "ledger/LedgerManager.h"
 #include "main/Application.h"
@@ -939,6 +940,13 @@ Peer::recvRawMessage(StellarMessage const& stellarMsg)
     }
     break;
 
+    case INCLUSION:
+    {
+        auto t = getOverlayMetrics().mRecvInclusionTimer.TimeScope();
+        this->recvInclusion(stellarMsg);
+    }
+    break;
+
     case AUTH:
     {
         auto t = getOverlayMetrics().mRecvAuthTimer.TimeScope();
@@ -1630,13 +1638,18 @@ Peer::recvGetPeers(StellarMessage const& msg)
 }
 
 void 
-Peer:: sendInclusion(bool ackOrNack)
+Peer:: sendInclusion(bool ackOrNack, NodeID const& rID, std::vector<NodeID> const& qn, NodeID const& pID)
 {
     ZoneScoped;
     StellarMessage m;
     m.type(INCLUSION);
-    m.inclusion().peerID = mApp.getHerder()->getSCP().getLocalNodeID();
+    m.inclusion().peerID = pID;
     m.inclusion().ackOrNack = ackOrNack;
+    m.inclusion().requesterID = rID;
+    for (auto it : qn) {
+        m.inclusion().qSet.push_back(it);
+    }
+    //m.inclusion().qSet = qn;
     auto msgPtr = std::make_shared<StellarMessage const>(m);
     sendMessage(msgPtr);
 }
@@ -1645,7 +1658,27 @@ void
 Peer::recvInclusion(StellarMessage const& msg)
 {
     ZoneScoped;
-    sendPeers();
+    auto& herder = static_cast<HerderImpl&>(mApp.getHerder());
+    auto keyTuple = std::make_tuple(msg.inclusion().requesterID, msg.inclusion().qSet);
+    // add ack and nack to local node's state
+    if (msg.inclusion().ackOrNack) {
+        herder.getSCP().getLocalNode()->addAck(keyTuple, msg.inclusion().peerID);
+
+    } else {
+        herder.getSCP().getLocalNode()->addNack(keyTuple, msg.inclusion().peerID);
+    }
+
+    if (herder.getSCP().getLocalNode()->isAckNackComplete(keyTuple)) {
+        // if ack and nack are complete, check whether nack is empty.
+        if (herder.getSCP().getLocalNode()->getNack(keyTuple).empty()) {
+            // if nack is empty, the add operation complete successfully
+            // we add qn to the local node's quorum set and remove keyTuple from ack and nack
+            herder.getSCP().getLocalNode()->removeAck(keyTuple);
+            herder.getSCP().getLocalNode()->removeNack(keyTuple);
+        } else {
+
+        }
+    } 
 }
 
 void
