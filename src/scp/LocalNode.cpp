@@ -492,9 +492,10 @@ LocalNode::findMinQuorum(NodeID const& checkedNode, stellar::QuorumTracker::Quor
     }
 }
 
-static std::set<NodeID> getQuorumUnion(NodeID const& nodeID, stellar::QuorumTracker::QuorumMap const& qMap) {
+std::set<NodeID> 
+LocalNode::getQuorumUnion(NodeID const& nodeID, stellar::QuorumTracker::QuorumMap const& qMap) {
     std::set<NodeID> quorumUnion;
-    for (auto minQs: findMinQuorum(nodeID, qMap)) {
+    for (auto minQs: LocalNode::findMinQuorum(nodeID, qMap)) {
         for (auto p: minQs) {
             quorumUnion.insert(p);
         }

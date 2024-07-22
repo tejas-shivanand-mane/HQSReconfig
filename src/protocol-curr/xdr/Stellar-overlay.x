@@ -354,6 +354,8 @@ case CHECK_ADD:
     CheckAdd checkAdd;
 case GET_CHECK:
     GetCheck getCheck;
+case CHECK:
+    Check check;
 case SUCCESS:
     Success success;
 case FAIL:
