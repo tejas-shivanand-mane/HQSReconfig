@@ -1798,13 +1798,22 @@ Peer::recvCheck(StellarMessage const& msg)
     if (msg.check().ackOrNack) {
         // add checkAck message locally and check if it is a quorum
         herder.getSCP().getLocalNode()->addCheckAck(keyTuple, msg.check().peerID);
-        if (LocalNode::isQuorumInclusion(minQ, herder.getSCP().getLocalNoode()->getCheckAck())){
+
+        std::vector<NodeID> vectorAck;
+        for (auto it: herder.getSCP().getLocalNode()->getCheckAck(keyTuple)) {
+            vectorAck.push_back(it);
+        }
+        if (LocalNode::isQuorumInclusion(minQ, vectorAck)){
             receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, true);
         }
     } else {
         // add checkNack message locally and check if it is a blocking set
         herder.getSCP().getLocalNode()->addCheckNack(keyTuple, msg.check().peerID);
-        if (LocalNode::isQuorumBlocking(minQ, herder.getSCP().getLocalNode()->getCheckNack())) {
+        std::vector<NodeID> vectorNack;
+        for (auto it: herder.getSCP().getLocalNode()->getCheckNack(keyTuple)) {
+            vectorNack.push_back(it);
+        }
+        if (LocalNode::isQuorumBlocking(minQ, vectorNack)) {
             receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, false);
         }
     }
@@ -1842,7 +1851,7 @@ Peer::recvCheckAdd(StellarMessage const& msg)
     if(msg.checkAdd().commitOrAbort) {
         // if we receive a Commit message, add it to the local commit variable
         herder.getSCP().getLocalNode()->addCommit(keyTuple, msg.checkAdd().peerID);
-        std::set<NodeID> commitNodes = herder.getSCP().getLocalNode()->getCommit();
+        std::set<NodeID> commitNodes = herder.getSCP().getLocalNode()->getCommit(keyTuple);
         // check have we received commit from all the nodes in qc or not
         bool allCommit = true;
         for (auto it: qc) {

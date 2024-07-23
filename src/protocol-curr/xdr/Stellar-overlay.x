@@ -110,7 +110,7 @@ struct Complete
 {
     NodeID peerID;
     NodeID qSet<>;
-    bool SuccessOrFail;
+    bool successOrFail;
 };
 
 // During the roll-out phrase, nodes can disable flow control in bytes.
