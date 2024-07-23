@@ -104,20 +104,13 @@ struct Check
     NodeID qSet<>;
 };
 
-// This is the Success message in add protocol
+// This is the Success or Fail message in add protocol
 // peerID: p (self), qSet: q_c
-struct Success 
+struct Complete 
 {
     NodeID peerID;
     NodeID qSet<>;
-};
-
-// This is the Fail message in add protocol
-// peerID: p (self), qSet: q_c
-struct Fail 
-{
-    NodeID peerID;
-    NodeID qSet<>;
+    bool SuccessOrFail;
 };
 
 // During the roll-out phrase, nodes can disable flow control in bytes.
@@ -182,8 +175,7 @@ enum MessageType
     CHECK_ADD = 23,
     GET_CHECK = 24,
     CHECK = 25,
-    SUCCESS = 26,
-    FAIL = 27,
+    COMPLETE = 26,
 
     // new messages
     HELLO = 13,
@@ -356,10 +348,8 @@ case GET_CHECK:
     GetCheck getCheck;
 case CHECK:
     Check check;
-case SUCCESS:
-    Success success;
-case FAIL:
-    Fail fail;
+case COMPLETE:
+    Complete complete;
 
 // SCP
 case GET_SCP_QUORUMSET:

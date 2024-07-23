@@ -92,6 +92,47 @@ LocalNode::removeNack(std::tuple<NodeID, std::vector<NodeID>> key)
     mNack.erase(key);
 }
 
+void 
+LocalNode::addCommit(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender)
+{
+    mCommit[key].insert(sender);
+
+}
+
+void 
+LocalNode::removeCommit(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    mCommit.erase(key);
+}
+
+void 
+LocalNode::addCheckAck(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender)
+{
+    mCheckAck[key].insert(sender);
+
+}
+void 
+LocalNode::addCheckNack(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender)
+{
+    mCheckNack[key].insert(sender);
+}
+void 
+LocalNode::removeCheckAck(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    mCheckAck.erase(key);
+}
+void 
+LocalNode::removeCheckNack(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    mCheckNack.erase(key);
+}
+
+void 
+LocalNode::addNewQuorum(std::vector<NodeID> newQ)
+{
+    
+}
+
 SCPQuorumSet const&
 LocalNode::getQuorumSet()
 {
@@ -130,6 +171,24 @@ std::set<NodeID>
 LocalNode::getNack(std::tuple<NodeID, std::vector<NodeID>> key)
 {
     return mNack[key];
+}
+
+std::set<NodeID> 
+LocalNode::getCommit(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    return mCommit[key];
+}
+
+std::set<NodeID> 
+LocalNode::getCheckAck(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    return mCheckAck[key];
+}
+
+std::set<NodeID> 
+LocalNode::getCheckNack(std::tuple<NodeID, std::vector<NodeID>> key)
+{
+    return mCheckNack[key];
 }
 
 bool 

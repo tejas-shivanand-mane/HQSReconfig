@@ -34,6 +34,9 @@ class LocalNode
     std::map<std::tuple<NodeID, std::vector<NodeID>>, std::set<NodeID>> mAck;
     std::map<std::tuple<NodeID, std::vector<NodeID>>, std::set<NodeID>> mNack;
     std::map<std::tuple<NodeID, std::vector<NodeID>>, std::set<NodeID>> mFailed;
+    std::map<std::tuple<NodeID, std::vector<NodeID>>, std::set<NodeID>> mCommit;
+    std::map<std::tuple<NodeID, std::vector<NodeID>>, std::set<NodeID>> mCheckAck;
+    std::map<std::tuple<NodeID, std::vector<NodeID>>, std::set<NodeID>> mCheckNack;
 
     // alternative qset used during externalize {{mNodeID}}
     Hash gSingleQSetHash;                      // hash of the singleton qset
@@ -55,6 +58,12 @@ class LocalNode
     void addNack(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender);
     void removeAck(std::tuple<NodeID, std::vector<NodeID>> key);
     void removeNack(std::tuple<NodeID, std::vector<NodeID>> key);
+    void addCommit(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender);
+    void removeCommit(std::tuple<NodeID, std::vector<NodeID>> key);
+    void addCheckAck(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender);
+    void addCheckNack(std::tuple<NodeID, std::vector<NodeID>> key, NodeID sender);
+    void removeCheckAck(std::tuple<NodeID, std::vector<NodeID>> key);
+    void removeCheckNack(std::tuple<NodeID, std::vector<NodeID>> key);
 
     SCPQuorumSet const& getQuorumSet();
     std::set<NodeID> getTombSet();
@@ -62,9 +71,13 @@ class LocalNode
     std::vector<std::vector<NodeID>> getTentativeSet();
     std::set<NodeID> getAck(std::tuple<NodeID, std::vector<NodeID>> key);
     std::set<NodeID> getNack(std::tuple<NodeID, std::vector<NodeID>> key);
+    std::set<NodeID> getCommit(std::tuple<NodeID, std::vector<NodeID>> key);
+    std::set<NodeID> getCheckAck(std::tuple<NodeID, std::vector<NodeID>> key);
+    std::set<NodeID> getCheckNack(std::tuple<NodeID, std::vector<NodeID>> key);
     bool isAckNackComplete(std::tuple<NodeID, std::vector<NodeID>> key);
     Hash const& getQuorumSetHash();
     bool isValidator();
+    void addNewQuorum(std::vector<NodeID> newQ);
 
     // returns the quorum set {{X}}
     static SCPQuorumSetPtr getSingletonQSet(NodeID const& nodeID);

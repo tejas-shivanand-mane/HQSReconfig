@@ -249,18 +249,15 @@ class Peer : public std::enable_shared_from_this<Peer>,
     void recvInclusion(StellarMessage const& msg);
     void recvGetCheckAdd(StellarMessage const& msg);
     void recvGetCheck(StellarMessage const& msg);
-    //void recvGetCheck(StellarMessage const& msg);
-    //void recvCheck(StellarMessage const& msg);
-    //void recvSuccess(StellarMessage const& msg);
-    //void recvFail(StellarMessage const& msg);
-
+    void recvCheck(StellarMessage const& msg);
+    void recvCheckAdd(StellarMessage const& msg);
+    void recvComplete(StellarMessage const& msg);
     
     void sendGetCheckAdd(NodeID const& pID, std::vector<NodeID> const& qn);
-    //void sendCheckAdd();
+    void sendCheckAdd(NodeID const& pID, NodeID const& rID, std::vector<NodeID> const& qc, bool commitOrAbort);
     void sendGetCheck(NodeID const& pID, NodeID const& rID, std::vector<NodeID> const& qn);
     void sendCheck(NodeID const& pID, NodeID const& rID, std::vector<NodeID> const& qc, bool ackOrNack);
-    //void sendSuccess();
-    //void sendFail();
+    void sendComplete(NodeID const& pID, std::vector<NodeID> const& qc, bool successOrFail);
 
     void sendHello();
     void sendAuth();

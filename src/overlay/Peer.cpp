@@ -1765,7 +1765,7 @@ Peer::recvGetCheck(StellarMessage const& msg)
 }
 
 void 
-Peer:: sendCheck(NodeID const& pID, NodeID const& rID, std::vector<NodeID> const& qc, bool ackOrNack)
+Peer::sendCheck(NodeID const& pID, NodeID const& rID, std::vector<NodeID> const& qc, bool ackOrNack)
 {
     ZoneScoped;
     StellarMessage m;
@@ -1778,6 +1778,137 @@ Peer:: sendCheck(NodeID const& pID, NodeID const& rID, std::vector<NodeID> const
     }
     auto msgPtr = std::make_shared<StellarMessage const>(m);
     sendMessage(msgPtr);
+}
+
+void
+Peer::recvCheck(StellarMessage const& msg)
+{
+    ZoneScoped;
+    auto& herder = static_cast<HerderImpl&>(mApp.getHerder());
+    std::vector<NodeID> qc;
+    for (auto it : msg.check().qSet) {
+        qc.push_back(it);
+    }
+    auto localNodeID = herder.getSCP().getLocalNodeID();
+    auto keyTuple = std::make_tuple(msg.check().requesterID, qc);
+    
+    // send Commit or Abort back to p 
+    auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[msg.check().requesterID];
+    std::vector<std::vector<NodeID>> minQ = herder.getSCP().getLocalNode()->findMinQuorum(localNodeID, herder.getCurrentlyTrackedQuorum());
+    if (msg.check().ackOrNack) {
+        // add checkAck message locally and check if it is a quorum
+        herder.getSCP().getLocalNode()->addCheckAck(keyTuple, msg.check().peerID);
+        if (LocalNode::isQuorumInclusion(minQ, herder.getSCP().getLocalNoode()->getCheckAck())){
+            receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, true);
+        }
+    } else {
+        // add checkNack message locally and check if it is a blocking set
+        herder.getSCP().getLocalNode()->addCheckNack(keyTuple, msg.check().peerID);
+        if (LocalNode::isQuorumBlocking(minQ, herder.getSCP().getLocalNode()->getCheckNack())) {
+            receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, false);
+        }
+    }
+}
+
+void 
+Peer::sendCheckAdd(NodeID const& pID, NodeID const& rID, std::vector<NodeID> const& qc, bool commitOrAbort)
+{
+    ZoneScoped;
+    StellarMessage m;
+    m.type(CHECK_ADD);
+    m.checkAdd().peerID = pID;
+    m.checkAdd().requesterID = rID;
+    m.checkAdd().commitOrAbort = commitOrAbort;
+    for (auto it : qc) {
+        m.checkAdd().qSet.push_back(it);
+    }
+    auto msgPtr = std::make_shared<StellarMessage const>(m);
+    sendMessage(msgPtr);
+}
+
+void
+Peer::recvCheckAdd(StellarMessage const& msg)
+{
+    ZoneScoped;
+    auto& herder = static_cast<HerderImpl&>(mApp.getHerder());
+    std::vector<NodeID> qc;
+    for (auto it : msg.checkAdd().qSet) {
+        qc.push_back(it);
+    }
+    auto localNodeID = herder.getSCP().getLocalNodeID();
+    auto keyTuple = std::make_tuple(msg.check().requesterID, qc);
+    
+    // send Success or Fail to all nodes in q_c 
+    if(msg.checkAdd().commitOrAbort) {
+        // if we receive a Commit message, add it to the local commit variable
+        herder.getSCP().getLocalNode()->addCommit(keyTuple, msg.checkAdd().peerID);
+        std::set<NodeID> commitNodes = herder.getSCP().getLocalNode()->getCommit();
+        // check have we received commit from all the nodes in qc or not
+        bool allCommit = true;
+        for (auto it: qc) {
+            auto inSet = commitNodes.find(it);
+            if (inSet == commitNodes.end()) {
+                allCommit = false;
+                break;
+            }
+        }
+        // if all the nodes in qc have sent commit, send Success to all the nodes in qc
+        if (allCommit) {
+            //TODO: AddComplete should be issued here
+            for (auto it: qc) {
+                auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[it];
+                receiver->sendComplete(localNodeID, qc, true);
+            }
+        }
+    } else {
+        // TODO: AddFail should be issued here
+        // if we receive one Abort message for p'' \in qc, we send Fail to all p' \in qc
+        for (auto it: qc) {
+            auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[it];
+            receiver->sendComplete(localNodeID, qc, false);
+        }
+    }
+}
+
+void 
+Peer::sendComplete(NodeID const& pID, std::vector<NodeID> const& qc, bool successOrFail)
+{
+    ZoneScoped;
+    StellarMessage m;
+    m.type(COMPLETE);
+    m.complete().peerID = pID;
+    m.complete().successOrFail = successOrFail;
+    for (auto it : qc) {
+        m.complete().qSet.push_back(it);
+    }
+    auto msgPtr = std::make_shared<StellarMessage const>(m);
+    sendMessage(msgPtr);
+}
+
+void
+Peer::recvComplete(StellarMessage const& msg)
+{
+    ZoneScoped;
+    auto& herder = static_cast<HerderImpl&>(mApp.getHerder());
+    std::vector<NodeID> qc;
+    for (auto it : msg.complete().qSet) {
+        qc.push_back(it);
+    }
+    auto localNodeID = herder.getSCP().getLocalNodeID();
+    auto keyTuple = std::make_tuple(msg.check().peerID, qc);
+    
+    if(msg.complete().successOrFail) {
+        // if we receive a Success message, add qc to the local node's quorum
+        herder.getSCP().getLocalNode()->addNewQuorum(qc);
+    } 
+    // finish this reconfiguration request
+    // remove <p, qc> from tentative, Ack, Nack, Commit, CheckAck, CheckNack
+    herder.getSCP().getLocalNode()->removeTentative(keyTuple);
+    herder.getSCP().getLocalNode()->removeAck(keyTuple);
+    herder.getSCP().getLocalNode()->removeNack(keyTuple);
+    herder.getSCP().getLocalNode()->removeCommit(keyTuple);
+    herder.getSCP().getLocalNode()->removeCheckAck(keyTuple);
+    herder.getSCP().getLocalNode()->removeCheckNack(keyTuple);
 }
 
 void
