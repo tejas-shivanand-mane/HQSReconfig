@@ -171,7 +171,7 @@ enum MessageType
 
     // Reconfiguration messages
     INCLUSION = 21,
-    Get_CHECK_ADD = 22,
+    GET_CHECK_ADD = 22,
     CHECK_ADD = 23,
     GET_CHECK = 24,
     CHECK = 25,
@@ -340,7 +340,7 @@ case SURVEY_RESPONSE:
 // reconfig messages
 case INCLUSION:
     Inclusion inclusion;
-case Get_CHECK_ADD:
+case GET_CHECK_ADD:
     GetCheckAdd getCheckAdd;
 case CHECK_ADD:
     CheckAdd checkAdd;

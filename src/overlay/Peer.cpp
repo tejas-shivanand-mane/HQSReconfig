@@ -586,6 +586,18 @@ Peer::msgSummary(StellarMessage const& msg)
         return "FLODADVERT";
     case FLOOD_DEMAND:
         return "FLOODDEMAND";
+    case INCLUSION:
+        return "INCLUSION";
+    case GET_CHECK_ADD:
+        return "GET_CHECK_ADD";
+    case CHECK_ADD:
+        return "CHECK_ADD";
+    case GET_CHECK:
+        return "GET_CHECK";
+    case CHECK:
+        return "CHECK";
+    case COMPLETE:
+        return "COMPLETE";
     }
     return "UNKNOWN";
 }
@@ -670,6 +682,24 @@ Peer::sendMessage(std::shared_ptr<StellarMessage const> msg, bool log)
         break;
     case FLOOD_DEMAND:
         getOverlayMetrics().mSendFloodDemandMeter.Mark();
+        break;
+    case INCLUSION:
+        getOverlayMetrics().mSendInclusionMeter.Mark();
+        break;
+    case GET_CHECK_ADD:
+        getOverlayMetrics().mSendGetCheckAddMeter.Mark();
+        break;
+    case GET_CHECK:
+        getOverlayMetrics().mSendGetCheckMeter.Mark();
+        break;
+    case CHECK_ADD:
+        getOverlayMetrics().mSendCheckAddMeter.Mark();
+        break;
+    case CHECK:
+        getOverlayMetrics().mSendCheckMeter.Mark();
+        break;
+    case COMPLETE:
+        getOverlayMetrics().mSendCompleteMeter.Mark();
         break;
     };
 
@@ -845,6 +875,15 @@ Peer::recvMessage(StellarMessage const& stellarMsg)
         cat = "SCP";
         break;
 
+    // reconfiguration messages
+    case INCLUSION:
+    case GET_CHECK_ADD:
+    case GET_CHECK:
+    case CHECK_ADD:
+    case CHECK:
+    case COMPLETE:
+        cat = "RCFG";
+        break;
     default:
         cat = "MISC";
     }
@@ -940,12 +979,47 @@ Peer::recvRawMessage(StellarMessage const& stellarMsg)
     }
     break;
 
+    // reconfiguration related messages
     case INCLUSION:
     {
         auto t = getOverlayMetrics().mRecvInclusionTimer.TimeScope();
         this->recvInclusion(stellarMsg);
     }
     break;
+
+    case GET_CHECK_ADD:
+    {
+        auto t = getOverlayMetrics().mRecvGetCheckAddTimer.TimeScope();
+        this->recvGetCheckAdd(stellarMsg);
+    }
+    break;
+
+    case GET_CHECK:
+    {
+        auto t = getOverlayMetrics().mRecvGetCheckTimer.TimeScope();
+        this->recvGetCheck(stellarMsg);
+    }
+    break;
+
+    case CHECK_ADD:
+    {
+        auto t = getOverlayMetrics().mRecvCheckAddTimer.TimeScope();
+        this->recvCheckAdd(stellarMsg);
+    }
+    break;
+
+    case CHECK:
+    {
+        auto t = getOverlayMetrics().mRecvCheckTimer.TimeScope();
+        this->recvCheck(stellarMsg);
+    }
+    break;
+
+    case COMPLETE:
+    {
+        auto t = getOverlayMetrics().mRecvCompleteTimer.TimeScope();
+        this->recvComplete(stellarMsg);
+    }
 
     case AUTH:
     {
@@ -1699,7 +1773,7 @@ Peer:: sendGetCheckAdd(NodeID const& pID, std::vector<NodeID> const& qn)
 {
     ZoneScoped;
     StellarMessage m;
-    m.type(Get_CHECK_ADD);
+    m.type(GET_CHECK_ADD);
     m.getCheckAdd().peerID = pID;
     for (auto it : qn) {
         m.getCheckAdd().qSet.push_back(it);

@@ -63,7 +63,15 @@ OverlayMetrics::OverlayMetrics(Application& app)
     , mRecvInclusionTimer(
           app.getMetrics().NewTimer({"overlay", "recv", "inclusion"}))
     , mRecvGetCheckAddTimer(
+          app.getMetrics().NewTimer({"overlay", "recv", "get-check-add"}))
+    , mRecvGetCheckTimer(
+          app.getMetrics().NewTimer({"overlay", "recv", "get-check"}))
+    , mRecvCheckAddTimer(
           app.getMetrics().NewTimer({"overlay", "recv", "check-add"}))
+    , mRecvCheckTimer(
+          app.getMetrics().NewTimer({"overlay", "recv", "check"}))
+    , mRecvCompleteTimer(
+          app.getMetrics().NewTimer({"overlay", "recv", "complete"}))
 
     , mRecvSCPPrepareTimer(
           app.getMetrics().NewTimer({"overlay", "recv", "scp-prepare"}))
@@ -109,12 +117,19 @@ OverlayMetrics::OverlayMetrics(Application& app)
           app.getMetrics().NewMeter({"overlay", "send", "error"}, "message"))
     , mSendHelloMeter(
           app.getMetrics().NewMeter({"overlay", "send", "hello"}, "message"))
+    // reconfiguration related send meters
     , mSendInclusionMeter(
           app.getMetrics().NewMeter({"overlay", "send", "inclusion"}, "message"))
     , mSendCheckAddMeter(
           app.getMetrics().NewMeter({"overlay", "send", "check-add"}, "message"))
     , mSendCheckMeter(
           app.getMetrics().NewMeter({"overlay", "send", "check"}, "message"))
+    , mSendGetCheckAddMeter(
+          app.getMetrics().NewMeter({"overlay", "send", "get-check-add"}, "message"))
+    , mSendGetCheckMeter(
+          app.getMetrics().NewMeter({"overlay", "send", "get-check"}, "message"))
+    , mSendCompleteMeter(
+          app.getMetrics().NewMeter({"overlay", "send", "complete"}, "message"))
     , mSendAuthMeter(
           app.getMetrics().NewMeter({"overlay", "send", "auth"}, "message"))
     , mSendDontHaveMeter(app.getMetrics().NewMeter(
