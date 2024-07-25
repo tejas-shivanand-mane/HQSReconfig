@@ -159,8 +159,10 @@ class Peer : public std::enable_shared_from_this<Peer>,
 
     Json::Value getJsonInfo(bool compact) const;
 
-  protected:
     Application& mApp;
+
+  protected:
+    //Application& mApp;
 
     PeerRole mRole;
     PeerState mState;

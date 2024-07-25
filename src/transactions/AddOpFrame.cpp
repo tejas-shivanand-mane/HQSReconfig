@@ -82,14 +82,17 @@ AddOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
         std::vector<std::vector<NodeID>> minQs = stellar::LocalNode::findMinQuorum(localNodeID, herder.getCurrentlyTrackedQuorum());
         bool inclusionResult = stellar::LocalNode::isQuorumInclusion(minQs, newQ);
         auto peers = static_cast<OverlayManagerImpl&>(app.getOverlayManager()).getAuthenticatedPeers();
-        if(inclusionResult){
+        //if(inclusionResult){
         //If the inclusion check pass, send ack message to requesting node
-            peers.find(localNodeID)->second->sendInclusion(true, mAdd.destination, mAdd.qSet.validators, localNodeID);
-            
+        if (mAdd.destination == localNodeID) {
+            peers.begin()->second->sendInclusion(inclusionResult, mAdd.destination, mAdd.qSet.validators, localNodeID);
         } else {
+            peers.find(mAdd.destination)->second->sendInclusion(inclusionResult, mAdd.destination, mAdd.qSet.validators, localNodeID);
+        }    
+        //} else {
         //If the inclusion check fails, send nack message to requesting node
-            peers.find(localNodeID)->second->sendInclusion(false, mAdd.destination, mAdd.qSet.validators, localNodeID);
-        }
+            //peers.find(mAdd.destination)->second->sendInclusion(false, mAdd.destination, mAdd.qSet.validators, localNodeID);
+        //}
     }
         
     innerResult().code(ADD_SUCCESS);

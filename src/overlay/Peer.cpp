@@ -1726,8 +1726,14 @@ Peer:: sendInclusion(bool ackOrNack, NodeID const& rID, std::vector<NodeID> cons
     //m.inclusion().qSet = qn;
     auto msgPtr = std::make_shared<StellarMessage const>(m);
     // send inclusion check result to p
-    auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[rID];
-    receiver->sendMessage(msgPtr);
+    //auto currentPeers = mApp.getOverlayManager().getAuthenticatedPeers();
+    // if a node send the message to itself, we can directly process the message
+    if (pID == rID) {
+        recvInclusion(m);
+    } else {
+        auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[rID];
+        receiver->sendMessage(msgPtr);
+    }
 }
 
 void
@@ -1761,8 +1767,19 @@ Peer::recvInclusion(StellarMessage const& msg)
                 vectorNack.push_back(key);
             }
             for (NodeID const& p : nack) {
-                auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[p];
-                receiver->sendGetCheckAdd(localNodeID, vectorNack);
+                if (p == localNodeID) {
+                    StellarMessage m;
+                    m.type(GET_CHECK_ADD);
+                    m.getCheckAdd().peerID = localNodeID;
+                    for (auto it : vectorNack) {
+                        m.getCheckAdd().qSet.push_back(it);
+                    }
+                    auto msgPtr = std::make_shared<StellarMessage const>(m);
+                    recvGetCheckAdd(m);
+                } else {
+                    auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[p];
+                    receiver->sendGetCheckAdd(localNodeID, vectorNack);
+                }
             }
         }
     } 
@@ -1794,8 +1811,20 @@ Peer::recvGetCheckAdd(StellarMessage const& msg)
     auto localQuorum = herder.getCurrentlyTrackedQuorum();
     std::set<NodeID> allNodesInQ = LocalNode::getQuorumUnion(localNodeID, localQuorum);
     for (auto p : allNodesInQ) {
-        auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[p];
-        receiver->sendGetCheck(localNodeID, msg.getCheckAdd().peerID, msg.getCheckAdd().qSet);
+        if (p == localNodeID) {
+            StellarMessage m;
+            m.type(GET_CHECK);
+            m.getCheck().peerID = localNodeID;
+            m.getCheck().requesterID = msg.getCheckAdd().peerID;
+            for (auto it : msg.getCheckAdd().qSet) {
+                m.getCheck().qSet.push_back(it);
+            }
+            auto msgPtr = std::make_shared<StellarMessage const>(m);
+            recvGetCheck(m);
+        } else {
+            auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[p];
+            receiver->sendGetCheck(localNodeID, msg.getCheckAdd().peerID, msg.getCheckAdd().qSet);
+        }
     }
 }
 
@@ -1830,11 +1859,20 @@ Peer::recvGetCheck(StellarMessage const& msg)
     std::vector<std::vector<NodeID>> minQs = herder.getSCP().getLocalNode()->findMinQuorum(localNodeID, herder.getCurrentlyTrackedQuorum());
     bool addCheck = herder.getSCP().getLocalNode()->addCheck(minQs, tentative, qc);
     // send CheckNack or CheckNack back to p' 
-    auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[msg.getCheck().peerID];
-    if (addCheck) {
-        receiver->sendCheck(localNodeID, msg.getCheck().requesterID, qc, true);
+    if (msg.getCheck().peerID == localNodeID) {
+        StellarMessage m;
+        m.type(CHECK);
+        m.check().peerID = localNodeID;
+        m.check().requesterID = msg.getCheck().requesterID;
+        m.check().ackOrNack = addCheck;
+        for (auto it : qc) {
+            m.check().qSet.push_back(it);
+        }
+        auto msgPtr = std::make_shared<StellarMessage const>(m);
+        recvCheck(m);
     } else {
-        receiver->sendCheck(localNodeID, msg.getCheck().requesterID, qc, false);
+        auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[msg.getCheck().peerID];
+        receiver->sendCheck(localNodeID, msg.getCheck().requesterID, qc, addCheck); 
     }
 }
 
@@ -1867,7 +1905,7 @@ Peer::recvCheck(StellarMessage const& msg)
     auto keyTuple = std::make_tuple(msg.check().requesterID, qc);
     
     // send Commit or Abort back to p 
-    auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[msg.check().requesterID];
+    //auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[msg.check().requesterID];
     std::vector<std::vector<NodeID>> minQ = herder.getSCP().getLocalNode()->findMinQuorum(localNodeID, herder.getCurrentlyTrackedQuorum());
     if (msg.check().ackOrNack) {
         // add checkAck message locally and check if it is a quorum
@@ -1878,7 +1916,21 @@ Peer::recvCheck(StellarMessage const& msg)
             vectorAck.push_back(it);
         }
         if (LocalNode::isQuorumInclusion(minQ, vectorAck)){
-            receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, true);
+            if (msg.check().requesterID == localNodeID) {
+                StellarMessage m;
+                m.type(CHECK_ADD);
+                m.checkAdd().peerID = localNodeID;
+                m.checkAdd().requesterID = msg.getCheck().requesterID;
+                m.checkAdd().commitOrAbort = true;
+                for (auto it : qc) {
+                    m.checkAdd().qSet.push_back(it);
+                }
+                auto msgPtr = std::make_shared<StellarMessage const>(m);
+                recvCheckAdd(m);
+            } else {
+                auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[msg.check().requesterID];
+                receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, true);
+            }
         }
     } else {
         // add checkNack message locally and check if it is a blocking set
@@ -1888,7 +1940,21 @@ Peer::recvCheck(StellarMessage const& msg)
             vectorNack.push_back(it);
         }
         if (LocalNode::isQuorumBlocking(minQ, vectorNack)) {
-            receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, false);
+            if (msg.check().requesterID == localNodeID) {
+                StellarMessage m;
+                m.type(CHECK_ADD);
+                m.checkAdd().peerID = localNodeID;
+                m.checkAdd().requesterID = msg.getCheck().requesterID;
+                m.checkAdd().commitOrAbort = false;
+                for (auto it : qc) {
+                    m.checkAdd().qSet.push_back(it);
+                }
+                auto msgPtr = std::make_shared<StellarMessage const>(m);
+                recvCheckAdd(m);
+            }  else {
+                auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[msg.check().requesterID];
+                receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, false);
+            }
         }
     }
 }
@@ -1939,16 +2005,40 @@ Peer::recvCheckAdd(StellarMessage const& msg)
         if (allCommit) {
             //TODO: AddComplete should be issued here
             for (auto it: qc) {
-                auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[it];
-                receiver->sendComplete(localNodeID, qc, true);
+                if (localNodeID == it) {
+                    StellarMessage m;
+                    m.type(COMPLETE);
+                    m.complete().peerID = localNodeID;
+                    m.complete().successOrFail = true;
+                    for (auto it : qc) {
+                        m.complete().qSet.push_back(it);
+                    }
+                    auto msgPtr = std::make_shared<StellarMessage const>(m);
+                    recvComplete(m);
+                } else {
+                    auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[it];
+                    receiver->sendComplete(localNodeID, qc, true);
+                }
             }
         }
     } else {
         // TODO: AddFail should be issued here
         // if we receive one Abort message for p'' \in qc, we send Fail to all p' \in qc
         for (auto it: qc) {
-            auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[it];
-            receiver->sendComplete(localNodeID, qc, false);
+            if (localNodeID == it) {
+                StellarMessage m;
+                m.type(COMPLETE);
+                m.complete().peerID = localNodeID;
+                m.complete().successOrFail = false;
+                for (auto it : qc) {
+                    m.complete().qSet.push_back(it);
+                }
+                auto msgPtr = std::make_shared<StellarMessage const>(m);
+                recvComplete(m);
+            } else {
+                auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[it];
+                receiver->sendComplete(localNodeID, qc, false);
+            }
         }
     }
 }
@@ -1982,6 +2072,7 @@ Peer::recvComplete(StellarMessage const& msg)
     
     if(msg.complete().successOrFail) {
         // if we receive a Success message, add qc to the local node's quorum
+        // TODO: p should add q_n to its quorum set
         herder.getSCP().getLocalNode()->addNewQuorum(qc);
     } 
     // finish this reconfiguration request
