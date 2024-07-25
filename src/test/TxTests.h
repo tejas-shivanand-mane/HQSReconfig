@@ -32,6 +32,7 @@ struct ExpectedOpResult
     ExpectedOpResult(OperationResultCode code);
     ExpectedOpResult(CreateAccountResultCode createAccountCode);
     ExpectedOpResult(LeaveResultCode leaveCode);
+    ExpectedOpResult(AddResultCode addCode);
     ExpectedOpResult(PaymentResultCode paymentCode);
     ExpectedOpResult(AccountMergeResultCode accountMergeCode);
     ExpectedOpResult(AccountMergeResultCode accountMergeCode,
@@ -168,6 +169,8 @@ Operation bumpSequence(SequenceNumber to);
 Operation createAccount(PublicKey const& dest, int64_t amount);
 
 Operation leave(PublicKey const& dest, SCPQuorumSet quorums);
+
+Operation add(PublicKey const& dest, SCPQuorumSet quorums);
 
 Operation payment(PublicKey const& to, int64_t amount);
 

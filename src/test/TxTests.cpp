@@ -60,6 +60,13 @@ ExpectedOpResult::ExpectedOpResult(LeaveResultCode leaveCode)
     mOperationResult.tr().leaveResult().code(leaveCode);
 }
 
+ExpectedOpResult::ExpectedOpResult(AddResultCode addCode)
+{
+    mOperationResult.code(opINNER);
+    mOperationResult.tr().type(ADD);
+    mOperationResult.tr().addResult().code(addCode);
+}
+
 ExpectedOpResult::ExpectedOpResult(PaymentResultCode paymentCode)
 {
     mOperationResult.code(opINNER);
@@ -776,6 +783,17 @@ leave(PublicKey const& dest, SCPQuorumSet quorums)
     //op.body.leaveOp().startingBalance = amount;
     op.body.leaveOp().qSet = quorums;
     op.body.leaveOp().destination = dest;
+    return op;
+}
+
+Operation
+add(PublicKey const& dest, SCPQuorumSet quorums)
+{
+    Operation op;
+    op.body.type(ADD);
+    //op.body.leaveOp().startingBalance = amount;
+    op.body.addOp().qSet = quorums;
+    op.body.addOp().destination = dest;
     return op;
 }
 

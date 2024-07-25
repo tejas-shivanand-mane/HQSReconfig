@@ -524,6 +524,121 @@ TEST_CASE(
     LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("database"));
 }
 
+TEST_CASE(
+    "Add test on 4 nodes: success",
+    "[simulation][add]")
+{
+    Hash networkID = sha256(getTestConfig().NETWORK_PASSPHRASE);
+    //TODO: change the simulation to TCP connections
+    Simulation::pointer simulation =
+        Topologies::customAddSuccess(Simulation::OVER_LOOPBACK, networkID);
+
+    simulation->startAllNodes();
+    simulation->crankUntil(
+        [&]() { return simulation->haveAllExternalized(3, 1); },
+        2 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, false);
+
+    auto nodes = simulation->getNodes();
+    auto& app = *nodes[3]; // pick node B to generate load 
+
+    auto& loadGen = app.getLoadGenerator();
+    loadGen.generateLoad(GeneratedLoadConfig::createAccountsLoad(
+        /* nAccounts */ 4,
+        /* txRate */ 10));
+
+    // get node D for add operation
+    auto nodeIDs = simulation->getNodeIDs();
+    auto nodeD = nodeIDs[0];
+    auto nodeB = nodeIDs[3];
+
+    auto* herderD = static_cast<HerderImpl*>(&nodes[0]->getHerder());
+    //SCPQuorumSet qSetMinQD;
+    //qSetMinQD.threshold = 1;
+    //std::vector<std::vector<NodeID>> minQD = LocalNode::findMinQuorum(nodeD, herderD->getCurrentlyTrackedQuorum());
+    //for(auto it : minQD){
+    //        SCPQuorumSet defaultQ;
+    //        defaultQ.threshold = 3;
+    //        for(auto id: it){
+    //            defaultQ.validators.emplace_back(id);
+    //        }
+    //        qSetMinQD.innerSets.emplace_back(defaultQ);
+    //}
+
+    SCPQuorumSet newQD;
+    newQD.threshold = 2;
+    newQD.validators.push_back(nodeD);
+    newQD.validators.push_back(nodeB);
+
+    try
+    {
+        simulation->crankUntil(
+            [&]() {
+                // we need to wait 4 rounds in case the tx don't propagate
+                // to the other nodes in time and the other node gets the
+                // nomination
+                return simulation->haveAllExternalized(5, 4) &&
+                       loadGen.checkAccountSynced(app, true).empty();
+            },
+            3 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, false);
+
+        loadGen.generateLoad(
+            // number of accounts >= number of transactions
+            GeneratedLoadConfig::txLoad(LoadGenMode::ADD, 4, 4, 4, 0U, std::nullopt, nodeD, newQD));
+        simulation->crankUntil(
+            [&]() {
+                return simulation->haveAllExternalized(8, 4) &&
+                       loadGen.checkAccountSynced(app, false).empty();
+            },
+            2 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, true);
+    }
+    catch (...)
+    {
+        auto problems = loadGen.checkAccountSynced(app, false);
+        REQUIRE(problems.empty());
+    }
+
+    // test node B's minimal quorum includes {B, D}
+    auto* herderB = static_cast<HerderImpl*>(&nodes[3]->getHerder());
+    //std::set<NodeID> tombB = herderB->getSCP().getLocalNode()->getTombSet();
+    //REQUIRE(tombB.find(nodeD) != tombB.end());
+    std::vector<std::vector<NodeID>> updatedMinQB = LocalNode::findMinQuorum(nodeB, herderB->getCurrentlyTrackedQuorum());
+    std::vector<NodeID> bd  = {nodeB, nodeD};
+    std::vector<NodeID> db  = {nodeD, nodeB};
+    bool foundBD = false;
+    for (auto it : updatedMinQB)
+    {
+        //REQUIRE(std::find(it.begin(), it.end(), nodeD) == it.end());
+        if (it == bd || it == db) {
+            foundBD = true;
+        }
+    }
+    REQUIRE(foundBD);
+    
+    // test node D's minimal quorum includes node D
+    //std::set<NodeID> tombD = herderD->getSCP().getLocalNode()->getTombSet();
+    //REQUIRE(tombD.find(nodeD) != tombD.end());
+    std::vector<std::vector<NodeID>> updatedMinQD = LocalNode::findMinQuorum(nodeD, herderD->getCurrentlyTrackedQuorum());
+    bool foundBD2 = false;
+    for (auto it : updatedMinQD)
+    {
+        //REQUIRE(std::find(it.begin(), it.end(), nodeD) == it.end());
+        if (it == bd || it == db) {
+            foundBD2 = true;
+        }
+    }
+    REQUIRE(foundBD2);
+
+    //std::vector<std::vector<NodeID>> updatedMinQs = LocalNode::findMinQuorum(nodeD, herderD->getCurrentlyTrackedQuorum());
+    //for (auto it : updatedMinQs)
+    //{
+    //    REQUIRE(std::find(it.begin(), it.end(), nodeD) == it.end());
+  
+    //}
+    //REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), nodeD) == updatedMinQs[0].end());
+
+    LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("database"));
+}
+
 Application::pointer
 newLoadTestApp(VirtualClock& clock)
 {

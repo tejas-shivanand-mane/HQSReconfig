@@ -98,6 +98,10 @@ LoadGenerator::getMode(std::string const& mode)
     {
         return LoadGenMode::LEAVE;
     }
+    else if (mode == "add")
+    {
+        return LoadGenMode::ADD;
+    }
 #ifdef ENABLE_NEXT_PROTOCOL_VERSION_UNSAFE_FOR_PRODUCTION
     else if (mode == "soroban")
     {
@@ -438,6 +442,17 @@ LoadGenerator::generateLoad(GeneratedLoadConfig cfg)
                 //auto opCount = chooseOpCount(mApp.getConfig());
                 generateTx = [&]() {
                     return leaveTransaction(cfg.nAccounts, cfg.offset,
+                                              ledgerNum, sourceAccountId,
+                                              2, cfg.reconfigNode, cfg.reconfigQ,
+                                              cfg.maxGeneratedFeeRate);
+                };
+            }
+            break;
+            case LoadGenMode::ADD:
+            {
+                //auto opCount = chooseOpCount(mApp.getConfig());
+                generateTx = [&]() {
+                    return addTransaction(cfg.nAccounts, cfg.offset,
                                               ledgerNum, sourceAccountId,
                                               2, cfg.reconfigNode, cfg.reconfigQ,
                                               cfg.maxGeneratedFeeRate);
@@ -806,6 +821,42 @@ LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
 }
 
 std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
+LoadGenerator::addTransaction(uint32_t numAccounts, uint32_t offset,
+                                  uint32_t ledgerNum, uint64_t sourceAccount,
+                                  uint32_t opCount,
+                                  std::optional<PublicKey> dest, std::optional<SCPQuorumSet> quorums,
+                                  std::optional<uint32_t> maxGeneratedFeeRate)
+{
+    TestAccountPtr to, from;
+    uint64_t amount = 1;
+    std::tie(from, to) =
+        pickAccountPair(numAccounts, offset, ledgerNum, sourceAccount);
+    vector<Operation> paymentOps;
+    paymentOps.reserve(opCount);
+    if (opCount >= 2) {
+        for (uint32_t i = 0; i < opCount-2; ++i)
+        {
+            paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
+        }
+    }
+    
+    // add a leave operation and then a payment to the end 
+    if (dest.has_value() && quorums.has_value()) {
+        paymentOps.emplace_back(txtest::add(dest.value(), quorums.value()));
+    } else {
+        CLOG_ERROR(
+                    LoadGen,
+                    "Load generation failed: no add node provided");
+    }
+    //paymentOps.emplace_back(txtest::leave(dest, quorums));
+    paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
+
+    return std::make_pair(from, createTransactionFramePtr(from, paymentOps,
+                                                          LoadGenMode::ADD,
+                                                          maxGeneratedFeeRate));
+}
+
+std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
 LoadGenerator::manageOfferTransaction(
     uint32_t ledgerNum, uint64_t accountId, uint32_t opCount,
     std::optional<uint32_t> maxGeneratedFeeRate)
@@ -1039,6 +1090,7 @@ LoadGenerator::TxMetrics::TxMetrics(medida::MetricsRegistry& m)
     , mManageOfferOps(m.NewMeter({"loadgen", "manageoffer", "submitted"}, "op"))
     , mPretendOps(m.NewMeter({"loadgen", "pretend", "submitted"}, "op"))
     , mLeaveOps(m.NewMeter({"loadgen", "leave", "submitted"}, "op"))
+    , mAddOps(m.NewMeter({"loadgen", "add", "submitted"}, "op"))
     , mTxnAttempted(m.NewMeter({"loadgen", "txn", "attempted"}, "txn"))
     , mTxnRejected(m.NewMeter({"loadgen", "txn", "rejected"}, "txn"))
     , mTxnBytes(m.NewMeter({"loadgen", "txn", "bytes"}, "txn"))
@@ -1125,6 +1177,9 @@ LoadGenerator::execute(TransactionFramePtr& txf, LoadGenMode mode,
     case LoadGenMode::LEAVE:
         txm.mLeaveOps.Mark(txf->getNumOperations());
         break;
+    case LoadGenMode::ADD:
+        txm.mAddOps.Mark(txf->getNumOperations());
+        break;
     case LoadGenMode::MIXED_TXS:
         if (txf->hasDexOperations())
         {
@@ -1186,7 +1241,7 @@ GeneratedLoadConfig::txLoad(LoadGenMode mode, uint32_t nAccounts, uint32_t nTxs,
     cfg.txRate = txRate;
     cfg.offset = offset;
     cfg.maxGeneratedFeeRate = maxFee;
-    if (mode == LoadGenMode::LEAVE)
+    if (mode == LoadGenMode::LEAVE || mode == LoadGenMode::ADD)
     {
         cfg.reconfigNode = reconfigNode;
         cfg.reconfigQ = reconfigQ;

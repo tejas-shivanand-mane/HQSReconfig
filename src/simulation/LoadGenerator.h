@@ -33,6 +33,7 @@ enum class LoadGenMode
     // Mix of payments and DEX-related transactions.
     MIXED_TXS,
     LEAVE,
+    ADD,
 #ifdef ENABLE_NEXT_PROTOCOL_VERSION_UNSAFE_FOR_PRODUCTION
     SOROBAN
 #endif
@@ -104,6 +105,7 @@ class LoadGenerator
         medida::Meter& mManageOfferOps;
         medida::Meter& mPretendOps;
         medida::Meter& mLeaveOps;
+        medida::Meter& mAddOps;
         medida::Meter& mTxnAttempted;
         medida::Meter& mTxnRejected;
         medida::Meter& mTxnBytes;
@@ -202,6 +204,12 @@ class LoadGenerator
                            std::optional<uint32_t> maxGeneratedFeeRate);
     std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
     leaveTransaction(uint32_t numAccounts, uint32_t offset,
+                    uint32_t ledgerNum, uint64_t sourceAccount,
+                    uint32_t opCount,
+                    std::optional<PublicKey> dest, std::optional<SCPQuorumSet> quorums,
+                    std::optional<uint32_t> maxGeneratedFeeRate);
+    std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
+    addTransaction(uint32_t numAccounts, uint32_t offset,
                     uint32_t ledgerNum, uint64_t sourceAccount,
                     uint32_t opCount,
                     std::optional<PublicKey> dest, std::optional<SCPQuorumSet> quorums,
