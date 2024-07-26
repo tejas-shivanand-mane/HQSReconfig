@@ -1741,7 +1741,11 @@ Peer::recvInclusion(StellarMessage const& msg)
 {
     ZoneScoped;
     auto& herder = static_cast<HerderImpl&>(mApp.getHerder());
-    auto keyTuple = std::make_tuple(msg.inclusion().requesterID, msg.inclusion().qSet);
+    std::vector<NodeID> qn;
+    for (auto it : msg.inclusion().qSet) {
+        qn.push_back(it);
+    }
+    auto keyTuple = std::make_tuple(msg.inclusion().requesterID, qn);
     // add ack and nack to local node's state
     if (msg.inclusion().ackOrNack) {
         herder.getSCP().getLocalNode()->addAck(keyTuple, msg.inclusion().peerID);
@@ -1758,6 +1762,7 @@ Peer::recvInclusion(StellarMessage const& msg)
             // we add qn to the local node's quorum set and remove keyTuple from ack and nack
             herder.getSCP().getLocalNode()->removeAck(keyTuple);
             herder.getSCP().getLocalNode()->removeNack(keyTuple);
+            herder.getSCP().getLocalNode()->addNewQuorum(qn);
         } else {
             auto localNodeID = herder.getSCP().getLocalNodeID();
             //otherwise nack contains the q_c that we need to send GetCheckAdd
@@ -1804,7 +1809,11 @@ Peer::recvGetCheckAdd(StellarMessage const& msg)
 {
     ZoneScoped;
     auto& herder = static_cast<HerderImpl&>(mApp.getHerder());
-    auto keyTuple = std::make_tuple(msg.getCheckAdd().peerID, msg.getCheckAdd().qSet);
+    std::vector<NodeID> qc;
+    for (auto it : msg.getCheckAdd().qSet) {
+        qc.push_back(it);
+    }
+    auto keyTuple = std::make_tuple(msg.getCheckAdd().peerID, qc);
     herder.getSCP().getLocalNode()->addTentative(keyTuple);
     // send GetCheck to all the nodes in the quorums
     auto localNodeID = herder.getSCP().getLocalNodeID();
@@ -1823,7 +1832,7 @@ Peer::recvGetCheckAdd(StellarMessage const& msg)
             recvGetCheck(m);
         } else {
             auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[p];
-            receiver->sendGetCheck(localNodeID, msg.getCheckAdd().peerID, msg.getCheckAdd().qSet);
+            receiver->sendGetCheck(localNodeID, msg.getCheckAdd().peerID, qc);
         }
     }
 }
