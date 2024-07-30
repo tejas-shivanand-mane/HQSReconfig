@@ -454,7 +454,7 @@ LoadGenerator::generateLoad(GeneratedLoadConfig cfg)
                 generateTx = [&]() {
                     return addTransaction(cfg.nAccounts, cfg.offset,
                                               ledgerNum, sourceAccountId,
-                                              2, cfg.reconfigNode, cfg.reconfigQ,
+                                              4, cfg.reconfigNode, cfg.reconfigQ,
                                               cfg.maxGeneratedFeeRate);
                 };
             }
