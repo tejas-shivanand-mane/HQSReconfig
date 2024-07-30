@@ -569,8 +569,8 @@ TEST_CASE(
     newQD.validators.push_back(nodeD);
     newQD.validators.push_back(nodeB);
 
-    //try
-    //{
+    try
+    {
         simulation->crankUntil(
             [&]() {
                 // we need to wait 4 rounds in case the tx don't propagate
@@ -590,12 +590,12 @@ TEST_CASE(
                 //&& loadGen.checkAccountSynced(app, false).empty();
             },
             20 * Herder::EXP_LEDGER_TIMESPAN_SECONDS, true);
-    //}
-    //catch (...)
-    //{
-    //    auto problems = loadGen.checkAccountSynced(app, false);
-    //    REQUIRE(problems.empty());
-    //}
+    }
+    catch (...)
+    {
+        auto problems = loadGen.checkAccountSynced(app, false);
+        REQUIRE(problems.empty());
+    }
 
     // test node B's minimal quorum includes {B, D}
     auto* herderB = static_cast<HerderImpl*>(&nodes[3]->getHerder());
