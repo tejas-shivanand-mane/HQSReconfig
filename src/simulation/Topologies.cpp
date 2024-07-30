@@ -182,17 +182,22 @@ Topologies::customAddSuccess(Simulation::Mode mode, Hash const& networkID,
         q.validators.emplace_back(keys[C].getPublicKey());
         s->addNode(keys[C], q);
     }
-    // D's qset: {A, D}
+    // D's qset: {A, D}, {C, D}
     {
         //outter set
         SCPQuorumSet q;
         q.threshold = 1;
         //inner set
+        SCPQuorumSet q1;
+        q1.threshold = 2;
+        q1.validators.emplace_back(keys[C].getPublicKey());
+        q1.validators.emplace_back(keys[D].getPublicKey());
         SCPQuorumSet q2;
         q2.threshold = 2;
         q2.validators.emplace_back(keys[A].getPublicKey());
         q2.validators.emplace_back(keys[D].getPublicKey());
         q.innerSets.emplace_back(q2);
+        q.innerSets.emplace_back(q1);
         s->addNode(keys[D], q);
     }
 

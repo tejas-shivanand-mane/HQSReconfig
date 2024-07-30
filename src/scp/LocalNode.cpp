@@ -132,7 +132,7 @@ LocalNode::addNewQuorum(std::vector<NodeID> newQ)
 {
     SCPQuorumSet currentQSet = mQSet;
     SCPQuorumSet newQSet;
-    newQSet.threshold = sizeof(newQ);
+    newQSet.threshold = newQ.size();
     for (auto it: newQ){
         newQSet.validators.emplace_back(it);
     }

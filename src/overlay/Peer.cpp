@@ -1929,7 +1929,7 @@ Peer::recvCheck(StellarMessage const& msg)
                 StellarMessage m;
                 m.type(CHECK_ADD);
                 m.checkAdd().peerID = localNodeID;
-                m.checkAdd().requesterID = msg.getCheck().requesterID;
+                m.checkAdd().requesterID = msg.check().requesterID;
                 m.checkAdd().commitOrAbort = true;
                 for (auto it : qc) {
                     m.checkAdd().qSet.push_back(it);
@@ -1938,7 +1938,7 @@ Peer::recvCheck(StellarMessage const& msg)
                 recvCheckAdd(m);
             } else {
                 auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[msg.check().requesterID];
-                receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, true);
+                receiver->sendCheckAdd(localNodeID, msg.check().requesterID, qc, true);
             }
         }
     } else {
@@ -1953,7 +1953,7 @@ Peer::recvCheck(StellarMessage const& msg)
                 StellarMessage m;
                 m.type(CHECK_ADD);
                 m.checkAdd().peerID = localNodeID;
-                m.checkAdd().requesterID = msg.getCheck().requesterID;
+                m.checkAdd().requesterID = msg.check().requesterID;
                 m.checkAdd().commitOrAbort = false;
                 for (auto it : qc) {
                     m.checkAdd().qSet.push_back(it);
@@ -1962,7 +1962,7 @@ Peer::recvCheck(StellarMessage const& msg)
                 recvCheckAdd(m);
             }  else {
                 auto receiver = mApp.getOverlayManager().getAuthenticatedPeers()[msg.check().requesterID];
-                receiver->sendCheckAdd(localNodeID, msg.getCheck().requesterID, qc, false);
+                receiver->sendCheckAdd(localNodeID, msg.check().requesterID, qc, false);
             }
         }
     }
@@ -1994,7 +1994,7 @@ Peer::recvCheckAdd(StellarMessage const& msg)
         qc.push_back(it);
     }
     auto localNodeID = herder.getSCP().getLocalNodeID();
-    auto keyTuple = std::make_tuple(msg.check().requesterID, qc);
+    auto keyTuple = std::make_tuple(msg.checkAdd().requesterID, qc);
     
     // send Success or Fail to all nodes in q_c 
     if(msg.checkAdd().commitOrAbort) {
@@ -2077,7 +2077,7 @@ Peer::recvComplete(StellarMessage const& msg)
         qc.push_back(it);
     }
     auto localNodeID = herder.getSCP().getLocalNodeID();
-    auto keyTuple = std::make_tuple(msg.check().peerID, qc);
+    auto keyTuple = std::make_tuple(msg.complete().peerID, qc);
     
     if(msg.complete().successOrFail) {
         // if we receive a Success message, add qc to the local node's quorum
