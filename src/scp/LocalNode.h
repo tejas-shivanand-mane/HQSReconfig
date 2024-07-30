@@ -109,6 +109,8 @@ class LocalNode
                                  std::vector<NodeID> const& nodeSet);
     static bool isQuorumInclusion(std::vector<std::vector<NodeID>> const& minQs,
                                  std::vector<NodeID> const& nodeSet);
+    static bool isSubset(const std::vector<NodeID>& vectorA, const std::vector<NodeID>& vectorB);
+
     static bool leaveCheck(std::vector<std::vector<NodeID>> const& minQs,
                                  std::set<NodeID> const& tomb, NodeID const& leavingNode);
     static bool addCheck(std::vector<std::vector<NodeID>> const& minQs,

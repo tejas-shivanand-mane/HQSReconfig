@@ -594,12 +594,25 @@ LocalNode::isQuorumInclusion(std::vector<std::vector<NodeID>> const& minQs,
 {
     for(auto q : minQs){
         // if there exist q \in minQs such that q is a subset of nodeSet
-        bool isSubset = std::includes(nodeSet.begin(), nodeSet.end(), q.begin(), q.end());
-        if(isSubset){
+        if(isSubset(q, nodeSet)){
             return true;
         }
     }
     return false;
+}
+
+// check whether vectorA is a subset of vectorB
+bool 
+LocalNode::isSubset(const std::vector<NodeID>& vectorA, const std::vector<NodeID>& vectorB) 
+{
+    std::unordered_set<NodeID> setB(vectorB.begin(), vectorB.end());
+
+    for (const NodeID& elem : vectorA) {
+        if (setB.find(elem) == setB.end()) {
+            return false;
+        }
+    }
+    return true;
 }
 
 //check whether a quorum system can let tombset and p leave
