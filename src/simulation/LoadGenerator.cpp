@@ -851,6 +851,11 @@ LoadGenerator::addTransaction(uint32_t numAccounts, uint32_t offset,
     //paymentOps.emplace_back(txtest::leave(dest, quorums));
     paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
 
+    // record add transaction issue time
+    VirtualClock clock;
+    auto now = clock.system_now();
+    CLOG_INFO(LoadGen, "Load generation: issue add transaction at {}", VirtualClock::to_time_t(now));
+
     return std::make_pair(from, createTransactionFramePtr(from, paymentOps,
                                                           LoadGenMode::ADD,
                                                           maxGeneratedFeeRate));

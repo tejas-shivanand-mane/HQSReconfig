@@ -552,17 +552,6 @@ TEST_CASE(
     auto nodeB = nodeIDs[3];
 
     auto* herderD = static_cast<HerderImpl*>(&nodes[0]->getHerder());
-    //SCPQuorumSet qSetMinQD;
-    //qSetMinQD.threshold = 1;
-    //std::vector<std::vector<NodeID>> minQD = LocalNode::findMinQuorum(nodeD, herderD->getCurrentlyTrackedQuorum());
-    //for(auto it : minQD){
-    //        SCPQuorumSet defaultQ;
-    //        defaultQ.threshold = 3;
-    //        for(auto id: it){
-    //            defaultQ.validators.emplace_back(id);
-    //        }
-    //        qSetMinQD.innerSets.emplace_back(defaultQ);
-    //}
 
     SCPQuorumSet newQD;
     newQD.threshold = 2;
@@ -614,9 +603,6 @@ TEST_CASE(
     }
     REQUIRE(foundBD);
     
-    // test node D's minimal quorum includes node D
-    //std::set<NodeID> tombD = herderD->getSCP().getLocalNode()->getTombSet();
-    //REQUIRE(tombD.find(nodeD) != tombD.end());
     std::vector<std::vector<NodeID>> updatedMinQD = LocalNode::findMinQuorum(nodeD, herderD->getCurrentlyTrackedQuorum());
     bool foundBD2 = false;
     for (auto it : updatedMinQD)
@@ -627,14 +613,6 @@ TEST_CASE(
         }
     }
     REQUIRE(foundBD2);
-
-    //std::vector<std::vector<NodeID>> updatedMinQs = LocalNode::findMinQuorum(nodeD, herderD->getCurrentlyTrackedQuorum());
-    //for (auto it : updatedMinQs)
-    //{
-    //    REQUIRE(std::find(it.begin(), it.end(), nodeD) == it.end());
-  
-    //}
-    //REQUIRE(std::find(updatedMinQs[0].begin(), updatedMinQs[0].end(), nodeD) == updatedMinQs[0].end());
 
     LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("database"));
 }

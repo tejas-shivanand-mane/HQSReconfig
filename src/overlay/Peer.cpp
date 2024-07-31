@@ -1763,6 +1763,9 @@ Peer::recvInclusion(StellarMessage const& msg)
             herder.getSCP().getLocalNode()->removeAck(keyTuple);
             herder.getSCP().getLocalNode()->removeNack(keyTuple);
             herder.getSCP().getLocalNode()->addNewQuorum(qn);
+            VirtualClock clock;
+            auto now = clock.system_now();
+            CLOG_INFO(Overlay, "Load generation: complete add transaction at {}", VirtualClock::to_time_t(now));
         } else {
             auto localNodeID = herder.getSCP().getLocalNodeID();
             //otherwise nack contains the q_c that we need to send GetCheckAdd
@@ -2092,6 +2095,11 @@ Peer::recvComplete(StellarMessage const& msg)
     herder.getSCP().getLocalNode()->removeCommit(keyTuple);
     herder.getSCP().getLocalNode()->removeCheckAck(keyTuple);
     herder.getSCP().getLocalNode()->removeCheckNack(keyTuple);
+
+    // record add complete
+    VirtualClock clock;
+    auto now = clock.system_now();
+    CLOG_INFO(Overlay, "Load generation: complete add transaction at {}", VirtualClock::to_time_t(now));
 }
 
 void
