@@ -112,6 +112,16 @@ LeaveOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
     else{
         innerResult().code(LEAVE_MALFORMED);
     }
+
+    // record leave transaction completion time
+    // Get the current time as a time_point object
+    auto now = std::chrono::system_clock::now();
+    // Convert the time_point to a duration since epoch
+    auto duration = now.time_since_epoch();
+    // Convert the duration to milliseconds
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    CLOG_INFO(Tx, "Transactions: leave transaction complete at {}", millis);
+
     return true;
 }
 

@@ -815,6 +815,15 @@ LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
     //paymentOps.emplace_back(txtest::leave(dest, quorums));
     paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
 
+    // record leave transaction issue time
+    // Get the current time as a time_point object
+    auto now = std::chrono::system_clock::now();
+    // Convert the time_point to a duration since epoch
+    auto duration = now.time_since_epoch();
+    // Convert the duration to milliseconds
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    CLOG_INFO(LoadGen, "Load generation: issue leave transaction at {}", millis);
+
     return std::make_pair(from, createTransactionFramePtr(from, paymentOps,
                                                           LoadGenMode::LEAVE,
                                                           maxGeneratedFeeRate));
