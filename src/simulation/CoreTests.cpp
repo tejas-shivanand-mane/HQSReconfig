@@ -614,7 +614,7 @@ TEST_CASE(
     }
     REQUIRE(foundBD2);
 
-    LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("database"));
+    LOG_INFO(DEFAULT_LOG, "{}", simulation->metricsSummary("ledger"));
 }
 
 Application::pointer

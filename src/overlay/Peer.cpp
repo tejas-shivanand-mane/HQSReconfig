@@ -1763,9 +1763,17 @@ Peer::recvInclusion(StellarMessage const& msg)
             herder.getSCP().getLocalNode()->removeAck(keyTuple);
             herder.getSCP().getLocalNode()->removeNack(keyTuple);
             herder.getSCP().getLocalNode()->addNewQuorum(qn);
-            VirtualClock clock;
-            auto now = clock.system_now();
-            CLOG_INFO(Overlay, "Load generation: complete add transaction at {}", VirtualClock::to_time_t(now));
+
+            //VirtualClock clock(VirtualClock::REAL_TIME);
+            //auto now = clock.system_now();
+            // Get the current time as a time_point object
+            auto now = std::chrono::system_clock::now();
+            // Convert the time_point to a duration since epoch
+            auto duration = now.time_since_epoch();
+            // Convert the duration to milliseconds
+            auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+            CLOG_INFO(Overlay, "Load generation: complete add transaction at {}", millis);
         } else {
             auto localNodeID = herder.getSCP().getLocalNodeID();
             //otherwise nack contains the q_c that we need to send GetCheckAdd
@@ -2097,9 +2105,16 @@ Peer::recvComplete(StellarMessage const& msg)
     herder.getSCP().getLocalNode()->removeCheckNack(keyTuple);
 
     // record add complete
-    VirtualClock clock;
-    auto now = clock.system_now();
-    CLOG_INFO(Overlay, "Load generation: complete add transaction at {}", VirtualClock::to_time_t(now));
+    //VirtualClock clock(VirtualClock::REAL_TIME);
+    //auto now = clock.system_now();
+    // Get the current time as a time_point object
+    auto now = std::chrono::system_clock::now();
+    // Convert the time_point to a duration since epoch
+    auto duration = now.time_since_epoch();
+    // Convert the duration to milliseconds
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+    CLOG_INFO(Overlay, "Load generation: complete add transaction at {}", millis);
 }
 
 void
