@@ -439,22 +439,22 @@ LoadGenerator::generateLoad(GeneratedLoadConfig cfg)
             break;
             case LoadGenMode::LEAVE:
             {
-                //auto opCount = chooseOpCount(mApp.getConfig());
-                generateTx = [&]() {
+                auto opCount = chooseOpCount(mApp.getConfig());
+                generateTx = [&, opCount]() {
                     return leaveTransaction(cfg.nAccounts, cfg.offset,
                                               ledgerNum, sourceAccountId,
-                                              2, cfg.reconfigNode, cfg.reconfigQ,
+                                              opCount, cfg.reconfigNode, cfg.reconfigQ,
                                               cfg.maxGeneratedFeeRate);
                 };
             }
             break;
             case LoadGenMode::ADD:
             {
-                //auto opCount = chooseOpCount(mApp.getConfig());
-                generateTx = [&]() {
+                auto opCount = chooseOpCount(mApp.getConfig());
+                generateTx = [&, opCount]() {
                     return addTransaction(cfg.nAccounts, cfg.offset,
                                               ledgerNum, sourceAccountId,
-                                              4, cfg.reconfigNode, cfg.reconfigQ,
+                                              opCount, cfg.reconfigNode, cfg.reconfigQ,
                                               cfg.maxGeneratedFeeRate);
                 };
             }
@@ -815,6 +815,9 @@ LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
     //paymentOps.emplace_back(txtest::leave(dest, quorums));
     paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
 
+    auto transactionFP = createTransactionFramePtr(from, paymentOps,
+                                                          LoadGenMode::LEAVE,
+                                                          maxGeneratedFeeRate);
     // record leave transaction issue time
     // Get the current time as a time_point object
     auto now = std::chrono::system_clock::now();
@@ -822,11 +825,9 @@ LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
     auto duration = now.time_since_epoch();
     // Convert the duration to milliseconds
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-    CLOG_INFO(LoadGen, "Load generation: issue leave transaction at {}", millis);
+    CLOG_INFO(LoadGen, "Load generation: issue leave transaction num {} at {}", transactionFP->getSeqNum(), millis);
 
-    return std::make_pair(from, createTransactionFramePtr(from, paymentOps,
-                                                          LoadGenMode::LEAVE,
-                                                          maxGeneratedFeeRate));
+    return std::make_pair(from, transactionFP);
 }
 
 std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
@@ -860,10 +861,11 @@ LoadGenerator::addTransaction(uint32_t numAccounts, uint32_t offset,
     //paymentOps.emplace_back(txtest::leave(dest, quorums));
     paymentOps.emplace_back(txtest::payment(to->getPublicKey(), amount));
 
-    // record add transaction issue time
-    //VirtualClock clock(VirtualClock::REAL_TIME);
-    //auto now = clock.system_now();
+    auto transactionFP = createTransactionFramePtr(from, paymentOps,
+                                                          LoadGenMode::ADD,
+                                                          maxGeneratedFeeRate);
 
+    // record add transaction issue time
     // Get the current time as a time_point object
     auto now = std::chrono::system_clock::now();
     // Convert the time_point to a duration since epoch
@@ -871,11 +873,9 @@ LoadGenerator::addTransaction(uint32_t numAccounts, uint32_t offset,
     // Convert the duration to milliseconds
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
-    CLOG_INFO(LoadGen, "Load generation: issue add transaction at {}", millis);
+    CLOG_INFO(LoadGen, "Load generation: issue add transaction num {} at {}", transactionFP->getSeqNum(), millis);
 
-    return std::make_pair(from, createTransactionFramePtr(from, paymentOps,
-                                                          LoadGenMode::ADD,
-                                                          maxGeneratedFeeRate));
+    return std::make_pair(from, transactionFP);
 }
 
 std::pair<LoadGenerator::TestAccountPtr, TransactionFramePtr>
