@@ -597,14 +597,7 @@ LedgerManagerImpl::closeLedgerIf(LedgerCloseData const& ledgerData)
         }
 
         closeLedger(ledgerData);
-        // Get the current time as a time_point object
-        auto now = std::chrono::system_clock::now();
-        // Convert the time_point to a duration since epoch
-        auto duration = now.time_since_epoch();
-        // Convert the duration to milliseconds
-        auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-
-        CLOG_INFO(Ledger, "Closed ledger: {} at {}", ledgerAbbrev(mLastClosedLedger), millis);
+        CLOG_INFO(Ledger, "Closed ledger: {}", ledgerAbbrev(mLastClosedLedger));
     }
     else if (ledgerData.getLedgerSeq() <= mLastClosedLedger.header.ledgerSeq)
     {
@@ -1411,6 +1404,19 @@ LedgerManagerImpl::applyTransactions(
             storeTransaction(mApp.getDatabase(), ledgerSeq, tx, tm.getXDR(),
                              txResultSet);
         }
+
+        //record the trsnaction closed and time
+        // Get the current time as a time_point object
+        auto now = std::chrono::system_clock::now();
+        // Convert the time_point to a duration since epoch
+        auto duration = now.time_since_epoch();
+        // Convert the duration to milliseconds
+        auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+        CLOG_INFO(Tx, " tx#{} = {} ops={} txseq={} (@ {}) at {}", index,
+                   hexAbbrev(tx->getFullHash()), tx->getNumOperations(),
+                   tx->getSeqNum(),
+                   mApp.getConfig().toShortString(tx->getSourceID()), 
+                   millis);
     }
 
     logTxApplyMetrics(ltx, numTxs, numOps);

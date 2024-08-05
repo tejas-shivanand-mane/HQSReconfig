@@ -825,7 +825,8 @@ LoadGenerator::leaveTransaction(uint32_t numAccounts, uint32_t offset,
     auto duration = now.time_since_epoch();
     // Convert the duration to milliseconds
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-    CLOG_INFO(LoadGen, "Load generation: issue leave transaction num {} at {}", transactionFP->getSeqNum(), millis);
+    CLOG_INFO(LoadGen, "Load generation: issue leave transaction {} at {}. Leaving Node: {}", hexAbbrev(transactionFP->getFullHash()), millis, 
+        KeyUtils::toShortString(dest.value()));
 
     return std::make_pair(from, transactionFP);
 }
@@ -873,7 +874,8 @@ LoadGenerator::addTransaction(uint32_t numAccounts, uint32_t offset,
     // Convert the duration to milliseconds
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
-    CLOG_INFO(LoadGen, "Load generation: issue add transaction num {} at {}", transactionFP->getSeqNum(), millis);
+    CLOG_INFO(LoadGen, "Load generation: issue add transaction {} at {}. Node: {}", hexAbbrev(transactionFP->getFullHash()), millis,
+        KeyUtils::toShortString(dest.value()));
 
     return std::make_pair(from, transactionFP);
 }

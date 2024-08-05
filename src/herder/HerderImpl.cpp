@@ -509,6 +509,20 @@ HerderImpl::recvTransaction(TransactionFrameBasePtr tx, bool submittedFromSelf)
 
     if (result == TransactionQueue::AddResult::ADD_STATUS_PENDING)
     {
+        // if the transaction was originally submitted by this node, log issue time
+        if (submittedFromSelf) {
+            // Get the current time as a time_point object
+            auto now = std::chrono::system_clock::now();
+            // Convert the time_point to a duration since epoch
+            auto duration = now.time_since_epoch();
+            // Convert the duration to milliseconds
+            auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+            CLOG_INFO(Herder, "recv transaction {} for {} at {}",
+                   hexAbbrev(tx->getFullHash()),
+                   KeyUtils::toShortString(tx->getSourceID()), 
+                   millis);
+        }
+        
         CLOG_TRACE(Herder, "recv transaction {} for {}",
                    hexAbbrev(tx->getFullHash()),
                    KeyUtils::toShortString(tx->getSourceID()));

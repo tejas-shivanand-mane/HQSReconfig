@@ -572,7 +572,7 @@ TEST_CASE(
 
         loadGen.generateLoad(
             // number of accounts >= number of transactions
-            GeneratedLoadConfig::txLoad(LoadGenMode::ADD, 4, 4, 4, 0U, std::nullopt, nodeD, newQD));
+            GeneratedLoadConfig::txLoad(LoadGenMode::ADD, 1, 4, 1, 0U, std::nullopt, nodeD, newQD));
         simulation->crankUntil(
             [&]() {
                 return simulation->haveAllExternalized(9, 4); 

@@ -120,7 +120,8 @@ LeaveOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
     auto duration = now.time_since_epoch();
     // Convert the duration to milliseconds
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-    CLOG_INFO(Tx, "Transactions: leave transaction complete at {}", millis);
+    // ltx.getHeader().ledgerSeq
+    CLOG_INFO(Tx, "Transactions: leave transaction complete at {}. Leaving node: {}", millis, KeyUtils::toShortString(mLeave.destination));
 
     return true;
 }
