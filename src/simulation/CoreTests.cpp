@@ -436,7 +436,8 @@ TEST_CASE(
     Hash networkID = sha256(getTestConfig().NETWORK_PASSPHRASE);
     //TODO: change the simulation to TCP connections
     Simulation::pointer simulation =
-        Topologies::customLeaveSuccess(Simulation::OVER_LOOPBACK, networkID);
+        Topologies::customLeaveSuccess(Simulation::OVER_TCP, networkID);
+        //Topologies::customLeaveSuccess(Simulation::OVER_LOOPBACK, networkID);
 
     simulation->startAllNodes();
     simulation->crankUntil(
@@ -531,7 +532,8 @@ TEST_CASE(
     Hash networkID = sha256(getTestConfig().NETWORK_PASSPHRASE);
     //TODO: change the simulation to TCP connections
     Simulation::pointer simulation =
-        Topologies::customAddSuccess(Simulation::OVER_LOOPBACK, networkID);
+        Topologies::customAddSuccess(Simulation::OVER_TCP, networkID);
+        //Topologies::customAddSuccess(Simulation::OVER_LOOPBACK, networkID);
 
     simulation->startAllNodes();
     simulation->crankUntil(
@@ -572,7 +574,7 @@ TEST_CASE(
 
         loadGen.generateLoad(
             // number of accounts >= number of transactions
-            GeneratedLoadConfig::txLoad(LoadGenMode::ADD, 1, 4, 1, 0U, std::nullopt, nodeD, newQD));
+            GeneratedLoadConfig::txLoad(LoadGenMode::ADD, 1, 4, 4, 0U, std::nullopt, nodeD, newQD));
         simulation->crankUntil(
             [&]() {
                 return simulation->haveAllExternalized(9, 4); 

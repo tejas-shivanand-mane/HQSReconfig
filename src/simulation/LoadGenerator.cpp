@@ -212,7 +212,7 @@ LoadGenerator::scheduleLoadGeneration(GeneratedLoadConfig cfg)
     }
     // During load submission, we must have enough unique source accounts (with
     // a buffer) to accommodate the desired tx rate.
-    if (cfg.mode != LoadGenMode::CREATE && cfg.nTxs > cfg.nAccounts &&
+    if (cfg.mode != LoadGenMode::CREATE && cfg.mode != LoadGenMode::ADD && cfg.nTxs > cfg.nAccounts &&
         (cfg.txRate * Herder::EXP_LEDGER_TIMESPAN_SECONDS.count()) *
                 MIN_UNIQUE_ACCOUNT_MULTIPLIER >
             cfg.nAccounts)
