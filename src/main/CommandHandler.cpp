@@ -991,6 +991,29 @@ CommandHandler::generateLoad(std::string const& params, std::string& retStr)
         cfg.dexTxPercent =
             parseOptionalParamOrDefault<uint32_t>(map, "dextxpercent", 0);
 
+        //reconfig (leave/add) parameters
+        NodeID n;
+        std::string nID = map["reconfigNode"];
+        if (!nID.empty())
+        {
+            if (!mApp.getHerder().resolveNodeID(nID, n))
+            {
+                throw std::invalid_argument("unknown name");
+            }
+        }
+        cfg.reconfigNode = n;
+
+        SCPQuorumSet q;
+        std::string qID = map["reconfigQ"];
+        if (!qID.empty())
+        {
+            if (!mApp.getHerder().resolveNodeID(nID, n))
+            {
+                throw std::invalid_argument("unknown quorum");
+            }
+        }
+        cfg.reconfigQ = q;
+
         if (cfg.maxGeneratedFeeRate)
         {
             auto baseFee = mApp.getLedgerManager().getLastTxFee();
