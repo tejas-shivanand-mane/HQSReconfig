@@ -1003,17 +1003,34 @@ CommandHandler::generateLoad(std::string const& params, std::string& retStr)
         }
         cfg.reconfigNode = n;
 
-        SCPQuorumSet q;
-        std::string qID = map["reconfigQ"];
-        if (!qID.empty())
+        // for leave mode, we need to find the quorum set of the requesting node (local node)
+        if (cfg.mode == LoadGenMode::LEAVE)
         {
-            if (!mApp.getHerder().resolveNodeID(nID, n))
-            {
-                throw std::invalid_argument("unknown quorum");
+            SCPQuorumSet qSetMinQD;
+            qSetMinQD.threshold = 1;
+            std::vector<std::vector<NodeID>> minQD = LocalNode::findMinQuorum(n, mApp.getHerder().getCurrentlyTrackedQuorum());
+            for(auto it : minQD){
+                SCPQuorumSet defaultQ;
+                defaultQ.threshold = it.size();
+                for(auto id: it){
+                    defaultQ.validators.emplace_back(id);
+                }
+                qSetMinQD.innerSets.emplace_back(defaultQ);
             }
+            cfg.reconfigQ = qSetMinQD;
+        } else {
+            SCPQuorumSet q;
+            std::string qID = map["reconfigQ"];
+            if (!qID.empty())
+            {
+                if (!mApp.getHerder().resolveNodeID(nID, n))
+                {
+                    throw std::invalid_argument("unknown quorum");
+                }
+            }
+            cfg.reconfigQ = q;
         }
-        cfg.reconfigQ = q;
-
+        
         if (cfg.maxGeneratedFeeRate)
         {
             auto baseFee = mApp.getLedgerManager().getLastTxFee();
