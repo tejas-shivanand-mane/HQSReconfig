@@ -1773,7 +1773,7 @@ Peer::recvInclusion(StellarMessage const& msg)
             // Convert the duration to milliseconds
             auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
-            CLOG_INFO(Overlay, "Overlay: complete add transaction at {}. Node: {}", millis, KeyUtils::toShortString(herder.getSCP().getLocalNodeID()));
+            CLOG_INFO(Tx, "Transactions: complete add transaction at {}. Node: {}", millis, KeyUtils::toShortString(herder.getSCP().getLocalNodeID()));
         } else {
             auto localNodeID = herder.getSCP().getLocalNodeID();
             //otherwise nack contains the q_c that we need to send GetCheckAdd
@@ -2114,7 +2114,7 @@ Peer::recvComplete(StellarMessage const& msg)
     // Convert the duration to milliseconds
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
-    CLOG_INFO(Overlay, "Overlay: complete add transaction at {}. Node : {}", millis, KeyUtils::toShortString(msg.complete().peerID));
+    CLOG_INFO(Tx, "Transactions: complete add transaction at {}. Node : {}", millis, KeyUtils::toShortString(msg.complete().peerID));
 }
 
 void

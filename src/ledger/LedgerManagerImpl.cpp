@@ -597,7 +597,14 @@ LedgerManagerImpl::closeLedgerIf(LedgerCloseData const& ledgerData)
         }
 
         closeLedger(ledgerData);
-        CLOG_INFO(Ledger, "Closed ledger: {}", ledgerAbbrev(mLastClosedLedger));
+        // Get the current time as a time_point object
+        auto now = std::chrono::system_clock::now();
+        // Convert the time_point to a duration since epoch
+        auto duration = now.time_since_epoch();
+        // Convert the duration to milliseconds
+        auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+        CLOG_INFO(Ledger, "Closed ledger: {} at {}", ledgerAbbrev(mLastClosedLedger), millis);
     }
     else if (ledgerData.getLedgerSeq() <= mLastClosedLedger.header.ledgerSeq)
     {
