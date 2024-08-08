@@ -1018,16 +1018,32 @@ CommandHandler::generateLoad(std::string const& params, std::string& retStr)
                 qSetMinQD.innerSets.emplace_back(defaultQ);
             }
             cfg.reconfigQ = qSetMinQD;
-        } else {
+        } else if (cfg.mode == LoadGenMode::ADD){
             SCPQuorumSet q;
-            std::string qID = map["reconfigQ"];
-            if (!qID.empty())
+            NodeID n1;
+            NodeID n2;
+            std::string n1ID = map["reconfigQ1"];
+            std::string n2ID = map["reconfigQ2"];
+            if (!n1ID.empty())
             {
-                if (!mApp.getHerder().resolveNodeID(nID, n))
+                if (!mApp.getHerder().resolveNodeID(n1ID, n1))
                 {
-                    throw std::invalid_argument("unknown quorum");
+                    throw std::invalid_argument("unknown node1");
                 }
             }
+            if (!n2ID.empty())
+            {
+                if (!mApp.getHerder().resolveNodeID(n2ID, n2))
+                {
+                    throw std::invalid_argument("unknown node2");
+                }
+            }
+            q.threshold = 2;
+            q.validators.emplace_back(n1);
+            q.validators.emplace_back(n2);
+            cfg.reconfigQ = q;
+        } else {
+            SCPQuorumSet q;
             cfg.reconfigQ = q;
         }
         
