@@ -995,7 +995,6 @@ CommandHandler::generateLoad(std::string const& params, std::string& retStr)
         for(const auto& it : map){
             CLOG_INFO(LoadGen, "parameter map: {} {}", it.first, it.second);
         }
-        //CLOG_INFO(LoadGen, "parameter map: {}", map);
         Config c = mApp.getConfig();
         NodeID n;
         std::string nID = map["reconfigNode"];
