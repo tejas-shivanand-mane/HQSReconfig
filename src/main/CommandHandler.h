@@ -6,6 +6,7 @@
 
 #include "lib/http/server.hpp"
 #include <string>
+#include "main/Config.h"
 
 /*
 handler functions for the http commands this server supports

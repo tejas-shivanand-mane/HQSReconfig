@@ -992,16 +992,23 @@ CommandHandler::generateLoad(std::string const& params, std::string& retStr)
             parseOptionalParamOrDefault<uint32_t>(map, "dextxpercent", 0);
 
         //reconfig (leave/add) parameters
+        for(const auto& it : map){
+            CLOG_INFO(LoadGen, "parameter map: {} {}", it.first, it.second);
+        }
+        //CLOG_INFO(LoadGen, "parameter map: {}", map);
+        Config c = mApp.getConfig();
         NodeID n;
         std::string nID = map["reconfigNode"];
         if (!nID.empty())
         {
+            CLOG_INFO(LoadGen, "resolve reconfig node: {}", nID);
             if (!mApp.getHerder().resolveNodeID(nID, n))
             {
                 throw std::invalid_argument("unknown name");
             }
         }
         cfg.reconfigNode = n;
+        CLOG_INFO(LoadGen, "reconfig node: {}", c.toShortString(n));
 
         // for leave mode, we need to find the quorum set of the requesting node (local node)
         if (cfg.mode == LoadGenMode::LEAVE)
@@ -1030,6 +1037,7 @@ CommandHandler::generateLoad(std::string const& params, std::string& retStr)
                 {
                     throw std::invalid_argument("unknown node1");
                 }
+                CLOG_INFO(LoadGen, "Node1 in new quorum: {}", c.toShortString(n1));
             }
             if (!n2ID.empty())
             {
@@ -1037,11 +1045,13 @@ CommandHandler::generateLoad(std::string const& params, std::string& retStr)
                 {
                     throw std::invalid_argument("unknown node2");
                 }
+                CLOG_INFO(LoadGen, "Node2 in new quorum: {}", c.toShortString(n2));
             }
             q.threshold = 2;
             q.validators.emplace_back(n1);
             q.validators.emplace_back(n2);
             cfg.reconfigQ = q;
+            CLOG_INFO(LoadGen, "Add new quorum: {}", c.toString(q) );
         } else {
             SCPQuorumSet q;
             cfg.reconfigQ = q;

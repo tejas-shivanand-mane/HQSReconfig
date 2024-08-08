@@ -74,6 +74,7 @@ AddOpFrame::doApply(Application& app, AbstractLedgerTxn& ltx,
         }
     }
     if (inNewQ) {
+        CLOG_INFO(Tx, "Add tx delivered");
         // for the requesting node, initialize entries in ack and nack maps
         //if mAdd.destination == localNodeID {
         //    herder.getLocalNode().addTentative(std::make_tuple(localNodeID, newQ));

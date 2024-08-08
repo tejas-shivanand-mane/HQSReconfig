@@ -1412,7 +1412,7 @@ LedgerManagerImpl::applyTransactions(
         auto duration = now.time_since_epoch();
         // Convert the duration to milliseconds
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-        CLOG_INFO(Tx, "Apply tx: {} at {}", index,
+        CLOG_INFO(Tx, "Apply tx: {} at {}",
                    hexAbbrev(tx->getFullHash()), 
                    millis);
     }
