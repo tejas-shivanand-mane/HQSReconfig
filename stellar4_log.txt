@@ -1,0 +1,143 @@
+2024-08-09T06:06:05.508 [default INFO] Config from stellar_nodeD.cfg
+2024-08-09T06:06:05.510 [default INFO] 'ARTIFICIALLY_GENERATE_LOAD_FOR_TESTING' enabled in configuration file - node will not function properly with most networks
+2024-08-09T06:06:05.510 [default INFO] Using QUORUM_SET: {
+   "t" : 2,
+   "v" : [
+      "D",
+      {
+         "t" : 1,
+         "v" : [ "A", "C" ]
+      }
+   ]
+}
+
+2024-08-09T06:06:05.510 [default WARNING] Adjusted TARGET_PEER_CONNECTIONS to 9 due to insufficient MAX_ADDITIONAL_PEER_CONNECTIONS=20
+2024-08-09T06:06:05.511 GDBVJ [default INFO] Starting stellar-core soroban-preview-10-July5-102-g641ab7cf-dirty
+2024-08-09T06:06:05.513 GDBVJ [Database INFO] Connecting to: postgresql://dbname=core5 host=localhost user=stellar5 password=********
+2024-08-09T06:06:05.533 GDBVJ [SCP INFO] LocalNode::LocalNode@D qSet: e41262
+2024-08-09T06:06:05.542 GDBVJ [Database INFO] DB schema is in current version
+2024-08-09T06:06:05.545 GDBVJ [default INFO] Listening on 0.0.0.0:11626 for HTTP requests
+2024-08-09T06:06:05.546 GDBVJ [default INFO] Connection effective settings:
+2024-08-09T06:06:05.546 GDBVJ [default INFO] TARGET_PEER_CONNECTIONS: 9
+2024-08-09T06:06:05.546 GDBVJ [default INFO] MAX_ADDITIONAL_PEER_CONNECTIONS: 20
+2024-08-09T06:06:05.546 GDBVJ [default INFO] MAX_PENDING_CONNECTIONS: 500
+2024-08-09T06:06:05.546 GDBVJ [default INFO] MAX_OUTBOUND_PENDING_CONNECTIONS: 156
+2024-08-09T06:06:05.546 GDBVJ [default INFO] MAX_INBOUND_PENDING_CONNECTIONS: 344
+2024-08-09T06:06:05.546 GDBVJ [History INFO] Archive 'local' has 'get' command only, will not be written
+2024-08-09T06:06:05.546 GDBVJ [History WARNING] No writable archives configured, history will not be written.
+2024-08-09T06:06:05.546 GDBVJ [Ledger INFO] Last closed ledger (LCL) hash is 2981b1d264ed929a058b4236323f7986359372ec711d0e546813dbad25f029f4
+2024-08-09T06:06:05.548 GDBVJ [Ledger INFO] Loaded LCL header from database: [seq=1, hash=2981b1]
+2024-08-09T06:06:05.550 GDBVJ [Ledger INFO] Starting up application
+2024-08-09T06:06:05.550 GDBVJ [Ledger INFO] Last closed ledger (LCL) hash is 2981b1d264ed929a058b4236323f7986359372ec711d0e546813dbad25f029f4
+2024-08-09T06:06:05.551 GDBVJ [Ledger INFO] Loaded LCL header from database: [seq=1, hash=2981b1]
+2024-08-09T06:06:05.556 GDBVJ [Ledger INFO] Assumed bucket-state for LCL: [seq=1, hash=2981b1]
+2024-08-09T06:06:05.570 GDBVJ [Overlay INFO] Binding to endpoint 0.0.0.0:11625
+2024-08-09T06:06:05.571 GDBVJ [default INFO] * 
+2024-08-09T06:06:05.571 GDBVJ [default INFO] * Force-starting scp from the current db state.
+2024-08-09T06:06:05.571 GDBVJ [default INFO] * 
+2024-08-09T06:06:05.571 GDBVJ [Herder INFO] Force joining SCP with local state
+2024-08-09T06:06:05.571 GDBVJ [Ledger INFO] Changing state LM_BOOTING_STATE -> LM_SYNCED_STATE
+2024-08-09T06:06:05.576 GDBVJ [History INFO] Downloading history archive state: .well-known/stellar-history.json
+2024-08-09T06:06:05.601 GDBVJ [History INFO] Archive information: [name: local, server: soroban-preview-10-July5-43-g965c75cf, currentLedger: 0]
+2024-08-09T06:06:05.862 GDBVJ [Overlay INFO] Connected to 127.0.0.1:11665
+2024-08-09T06:06:05.879 GDBVJ [Ledger INFO] Got consensus: [seq=2, prev=2981b1, txs=0, ops=0, sv: [ SIGNED@A txH: d58b38, ct: 1723183551, upgrades: [ ] ]]
+2024-08-09T06:06:05.903 GDBVJ [Ledger INFO] Closed ledger: [seq=2, hash=58b4ff] at 1723183565903
+2024-08-09T06:06:05.903 GDBVJ [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:06:05.903 GDBVJ [SCP INFO] Calculating 2-node network quorum intersection
+2024-08-09T06:06:05.903 GDBVJ [SCP WARNING] No quorums found in any SCC (possible network halt)
+2024-08-09T06:06:05.903 GDBVJ [SCP INFO] Examining 5 node groups for intersection-criticality
+2024-08-09T06:06:05.904 GDBVJ [SCP INFO] No intersection-critical groups found
+2024-08-09T06:06:07.620 GDBVJ [Overlay INFO] Connected to 127.0.0.1:11655
+2024-08-09T06:06:07.621 GDBVJ [Overlay INFO] Connected to 127.0.0.1:11645
+2024-08-09T06:06:08.376 GDBVJ [Herder INFO] Quorum information for 1 : {"cost":0,"lag_ms":null}
+
+2024-08-09T06:06:08.387 GDBVJ [Ledger INFO] Got consensus: [seq=3, prev=58b4ff, txs=0, ops=0, sv: [ SIGNED@B txH: 193807, ct: 1723183567, upgrades: [ ] ]]
+2024-08-09T06:06:08.407 GDBVJ [Ledger INFO] Closed ledger: [seq=3, hash=d2f98f] at 1723183568407
+2024-08-09T06:06:08.407 GDBVJ [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:06:08.407 GDBVJ [SCP INFO] Calculating 4-node network quorum intersection
+2024-08-09T06:06:08.408 GDBVJ [SCP INFO] Examining 6 node groups for intersection-criticality
+2024-08-09T06:06:08.421 GDBVJ [SCP WARNING] Group is intersection-critical: [A] (with 2 depending nodes)
+2024-08-09T06:06:08.421 GDBVJ [SCP WARNING] Group is intersection-critical: [C] (with 2 depending nodes)
+2024-08-09T06:06:08.422 GDBVJ [SCP WARNING] Found 2 intersection-critical groups
+2024-08-09T06:06:15.515 GDBVJ [Herder INFO] Quorum information for 2 : {"agree":3,"cost":6000,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":null,"ledger":2,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:15.530 GDBVJ [Ledger INFO] Got consensus: [seq=4, prev=d2f98f, txs=0, ops=0, sv: [ SIGNED@A txH: f783c9, ct: 1723183573, upgrades: [ ] ]]
+2024-08-09T06:06:15.550 GDBVJ [Ledger INFO] Closed ledger: [seq=4, hash=f95d91] at 1723183575550
+2024-08-09T06:06:19.477 GDBVJ [Herder INFO] Quorum information for 3 : {"agree":3,"cost":10592,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":null,"ledger":3,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:19.485 GDBVJ [Ledger INFO] Got consensus: [seq=5, prev=f95d91, txs=0, ops=0, sv: [ SIGNED@B txH: 92a004, ct: 1723183579, upgrades: [ ] ]]
+2024-08-09T06:06:19.497 GDBVJ [Ledger INFO] Closed ledger: [seq=5, hash=398c94] at 1723183579497
+2024-08-09T06:06:24.510 GDBVJ [Herder INFO] Quorum information for 4 : {"agree":3,"cost":22488,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":null,"ledger":4,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:24.517 GDBVJ [Ledger INFO] Got consensus: [seq=6, prev=398c94, txs=0, ops=0, sv: [ SIGNED@D txH: 0bc4cd, ct: 1723183584, upgrades: [ ] ]]
+2024-08-09T06:06:24.531 GDBVJ [Ledger INFO] Closed ledger: [seq=6, hash=c42b96] at 1723183584531
+2024-08-09T06:06:31.515 GDBVJ [Herder INFO] Quorum information for 5 : {"agree":3,"cost":10592,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":39,"ledger":5,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:31.526 GDBVJ [Ledger INFO] Got consensus: [seq=7, prev=c42b96, txs=0, ops=0, sv: [ SIGNED@C txH: faac7b, ct: 1723183589, upgrades: [ ] ]]
+2024-08-09T06:06:31.543 GDBVJ [Ledger INFO] Closed ledger: [seq=7, hash=f47adc] at 1723183591543
+2024-08-09T06:06:37.517 GDBVJ [Herder INFO] Quorum information for 6 : {"agree":3,"cost":9968,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":39,"ledger":6,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:37.525 GDBVJ [Ledger INFO] Got consensus: [seq=8, prev=f47adc, txs=0, ops=0, sv: [ SIGNED@C txH: 0ba309, ct: 1723183595, upgrades: [ ] ]]
+2024-08-09T06:06:37.536 GDBVJ [Ledger INFO] Closed ledger: [seq=8, hash=608c40] at 1723183597536
+2024-08-09T06:06:41.540 GDBVJ [Herder INFO] Quorum information for 7 : {"agree":3,"cost":22488,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":39,"ledger":7,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:41.548 GDBVJ [Ledger INFO] Got consensus: [seq=9, prev=608c40, txs=0, ops=0, sv: [ SIGNED@B txH: 496816, ct: 1723183601, upgrades: [ ] ]]
+2024-08-09T06:06:41.561 GDBVJ [Ledger INFO] Closed ledger: [seq=9, hash=e19ed0] at 1723183601561
+2024-08-09T06:06:46.549 GDBVJ [Herder INFO] Quorum information for 8 : {"agree":3,"cost":22488,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":39,"ledger":8,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:46.558 GDBVJ [Ledger INFO] Got consensus: [seq=10, prev=e19ed0, txs=0, ops=0, sv: [ SIGNED@B txH: 44b802, ct: 1723183606, upgrades: [ ] ]]
+2024-08-09T06:06:46.570 GDBVJ [Ledger INFO] Closed ledger: [seq=10, hash=496584] at 1723183606570
+2024-08-09T06:06:49.735 GDBVJ [LoadGen INFO] parameter map: accounts 1
+2024-08-09T06:06:49.735 GDBVJ [LoadGen INFO] parameter map: mode create
+2024-08-09T06:06:49.735 GDBVJ [LoadGen INFO] parameter map: txrate 1
+2024-08-09T06:06:49.735 GDBVJ [LoadGen INFO] parameter map: txs 1
+2024-08-09T06:06:49.735 GDBVJ [LoadGen INFO] reconfig node: GAAAA
+2024-08-09T06:06:49.739 GDBVJ [LoadGen INFO] Tx/s: 1 target, 0tx/0op actual (1m EWMA). Pending: 1 accounts, 1 txs. ETA: 0h0m
+2024-08-09T06:06:50.042 GDBVJ [LoadGen INFO] Tx/s: 1 target, 0tx/0op actual (1m EWMA). Pending: 1 accounts, 1 txs. ETA: 0h0m
+2024-08-09T06:06:50.757 GDBVJ [Herder INFO] recv transaction 596e03 for GAO5P at 1723183610757
+2024-08-09T06:06:51.588 GDBVJ [Herder INFO] Quorum information for 9 : {"agree":3,"cost":10592,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":39,"ledger":9,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:51.598 GDBVJ [Ledger INFO] Got consensus: [seq=11, prev=496584, txs=1, ops=1, sv: [ SIGNED@B txH: 084e92, ct: 1723183611, upgrades: [ ] ]]
+2024-08-09T06:06:51.601 GDBVJ [Tx INFO] applying ledger 11 (txs:1, ops:1, base_fee:100)
+2024-08-09T06:06:51.603 GDBVJ [Tx INFO] Apply tx: 596e03 at 1723183611603
+2024-08-09T06:06:51.621 GDBVJ [Ledger INFO] Closed ledger: [seq=11, hash=15c493] at 1723183611621
+2024-08-09T06:06:55.861 GDBVJ [LoadGen INFO] Load generation complete.
+2024-08-09T06:06:56.576 GDBVJ [Herder INFO] Quorum information for 10 : {"agree":3,"cost":10592,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":39,"ledger":10,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:56.585 GDBVJ [Ledger INFO] Got consensus: [seq=12, prev=15c493, txs=0, ops=0, sv: [ SIGNED@B txH: 6e56b5, ct: 1723183616, upgrades: [ ] ]]
+2024-08-09T06:06:56.599 GDBVJ [Ledger INFO] Closed ledger: [seq=12, hash=a88ab3] at 1723183616599
+2024-08-09T06:07:01.587 GDBVJ [Herder INFO] Quorum information for 11 : {"agree":3,"cost":13424,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":33,"ledger":11,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:01.596 GDBVJ [Ledger INFO] Got consensus: [seq=13, prev=a88ab3, txs=0, ops=0, sv: [ SIGNED@B txH: 0a92d9, ct: 1723183621, upgrades: [ ] ]]
+2024-08-09T06:07:01.605 GDBVJ [Ledger INFO] Closed ledger: [seq=13, hash=b46a61] at 1723183621605
+2024-08-09T06:07:06.598 GDBVJ [Herder INFO] Quorum information for 12 : {"agree":3,"cost":9968,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":33,"ledger":12,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:06.604 GDBVJ [Ledger INFO] Got consensus: [seq=14, prev=b46a61, txs=0, ops=0, sv: [ SIGNED@B txH: 98c602, ct: 1723183626, upgrades: [ ] ]]
+2024-08-09T06:07:06.619 GDBVJ [Ledger INFO] Closed ledger: [seq=14, hash=01e8c0] at 1723183626619
+2024-08-09T06:07:11.604 GDBVJ [Herder INFO] Quorum information for 13 : {"agree":3,"cost":9968,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":33,"ledger":13,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:11.612 GDBVJ [Ledger INFO] Got consensus: [seq=15, prev=01e8c0, txs=0, ops=0, sv: [ SIGNED@B txH: 202b98, ct: 1723183631, upgrades: [ ] ]]
+2024-08-09T06:07:11.623 GDBVJ [Ledger INFO] Closed ledger: [seq=15, hash=98f514] at 1723183631623
+2024-08-09T06:07:12.702 GDBVJ [LoadGen INFO] parameter map: accounts 1
+2024-08-09T06:07:12.703 GDBVJ [LoadGen INFO] parameter map: mode leave
+2024-08-09T06:07:12.703 GDBVJ [LoadGen INFO] parameter map: reconfigNode GDBVJU3MEV75IBBWHSD5CLXG7NH2BIEZGSTPI25CYCBJ3DIDTOZW6CLB
+2024-08-09T06:07:12.703 GDBVJ [LoadGen INFO] parameter map: txrate 1
+2024-08-09T06:07:12.703 GDBVJ [LoadGen INFO] parameter map: txs 1
+2024-08-09T06:07:12.703 GDBVJ [LoadGen INFO] resolve reconfig node: GDBVJU3MEV75IBBWHSD5CLXG7NH2BIEZGSTPI25CYCBJ3DIDTOZW6CLB
+2024-08-09T06:07:12.703 GDBVJ [LoadGen INFO] reconfig node: D
+2024-08-09T06:07:12.704 GDBVJ [LoadGen INFO] Tx/s: 1 target, 0.012453894499523116tx/0.155760156614281op actual (1m EWMA). Pending: 1 accounts, 1 txs. ETA: 0h1m
+2024-08-09T06:07:13.005 GDBVJ [LoadGen INFO] Tx/s: 1 target, 0.012453894499523116tx/0.155760156614281op actual (1m EWMA). Pending: 1 accounts, 1 txs. ETA: 0h1m
+2024-08-09T06:07:13.713 GDBVJ [LoadGen INFO] Load generation: issue leave transaction dc1c03 at 1723183633713. Leaving Node: GDBVJ
+2024-08-09T06:07:13.716 GDBVJ [Herder INFO] recv transaction dc1c03 for GD7TO at 1723183633716
+2024-08-09T06:07:16.627 GDBVJ [Herder INFO] Quorum information for 14 : {"agree":3,"cost":9968,"delayed":0,"disagree":0,"fail_at":2,"hash":"e41262","lag_ms":33,"ledger":14,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:16.634 GDBVJ [Ledger INFO] Got consensus: [seq=16, prev=98f514, txs=1, ops=2, sv: [ SIGNED@C txH: 304612, ct: 1723183636, upgrades: [ ] ]]
+2024-08-09T06:07:16.635 GDBVJ [Tx INFO] applying ledger 16 (txs:1, ops:2, base_fee:100)
+2024-08-09T06:07:16.636 GDBVJ [Tx INFO] Transactions: leave transaction complete at 1723183636636. Leaving node: GDBVJ
+2024-08-09T06:07:16.636 GDBVJ [Tx INFO] Apply tx: dc1c03 at 1723183636636
+2024-08-09T06:07:16.652 GDBVJ [Ledger INFO] Closed ledger: [seq=16, hash=1722a9] at 1723183636652
+2024-08-09T06:07:16.652 GDBVJ [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:07:16.652 GDBVJ [SCP INFO] Calculating 4-node network quorum intersection
+2024-08-09T06:07:16.652 GDBVJ [SCP ERROR] Found potential disjoint quorums: {B, C, A} vs. {D}
+2024-08-09T06:07:17.636 GDBVJ [default INFO] Application destructing
+2024-08-09T06:07:17.639 GDBVJ [default INFO] Application destroyed

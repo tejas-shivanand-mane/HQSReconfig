@@ -1,0 +1,181 @@
+2024-08-09T06:05:57.094 [default INFO] Config from stellar_nodeBL.cfg
+2024-08-09T06:05:57.096 [default INFO] 'ARTIFICIALLY_GENERATE_LOAD_FOR_TESTING' enabled in configuration file - node will not function properly with most networks
+2024-08-09T06:05:57.097 [default INFO] Using QUORUM_SET: {
+   "t" : 2,
+   "v" : [
+      "B",
+      {
+         "t" : 1,
+         "v" : [ "A", "C", "D" ]
+      }
+   ]
+}
+
+2024-08-09T06:05:57.097 [default WARNING] Adjusted TARGET_PEER_CONNECTIONS to 9 due to insufficient MAX_ADDITIONAL_PEER_CONNECTIONS=20
+2024-08-09T06:05:57.098 GD6Y5 [default INFO] Starting stellar-core soroban-preview-10-July5-102-g641ab7cf-dirty
+2024-08-09T06:05:57.099 GD6Y5 [Database INFO] Connecting to: postgresql://dbname=core3 host=localhost user=stellar3 password=********
+2024-08-09T06:05:57.179 GD6Y5 [SCP INFO] LocalNode::LocalNode@B qSet: 9f74a6
+2024-08-09T06:05:57.209 GD6Y5 [Database INFO] DB schema is in current version
+2024-08-09T06:05:57.211 GD6Y5 [default INFO] Listening on 0.0.0.0:11646 for HTTP requests
+2024-08-09T06:05:57.212 GD6Y5 [default INFO] Connection effective settings:
+2024-08-09T06:05:57.212 GD6Y5 [default INFO] TARGET_PEER_CONNECTIONS: 9
+2024-08-09T06:05:57.212 GD6Y5 [default INFO] MAX_ADDITIONAL_PEER_CONNECTIONS: 20
+2024-08-09T06:05:57.212 GD6Y5 [default INFO] MAX_PENDING_CONNECTIONS: 500
+2024-08-09T06:05:57.212 GD6Y5 [default INFO] MAX_OUTBOUND_PENDING_CONNECTIONS: 156
+2024-08-09T06:05:57.212 GD6Y5 [default INFO] MAX_INBOUND_PENDING_CONNECTIONS: 344
+2024-08-09T06:05:57.212 GD6Y5 [History INFO] Archive 'local' has 'get' command only, will not be written
+2024-08-09T06:05:57.212 GD6Y5 [History WARNING] No writable archives configured, history will not be written.
+2024-08-09T06:05:57.213 GD6Y5 [Ledger INFO] Last closed ledger (LCL) hash is 2981b1d264ed929a058b4236323f7986359372ec711d0e546813dbad25f029f4
+2024-08-09T06:05:57.215 GD6Y5 [Ledger INFO] Loaded LCL header from database: [seq=1, hash=2981b1]
+2024-08-09T06:05:57.216 GD6Y5 [Ledger INFO] Starting up application
+2024-08-09T06:05:57.217 GD6Y5 [Ledger INFO] Last closed ledger (LCL) hash is 2981b1d264ed929a058b4236323f7986359372ec711d0e546813dbad25f029f4
+2024-08-09T06:05:57.218 GD6Y5 [Ledger INFO] Loaded LCL header from database: [seq=1, hash=2981b1]
+2024-08-09T06:05:57.220 GD6Y5 [Ledger INFO] Assumed bucket-state for LCL: [seq=1, hash=2981b1]
+2024-08-09T06:05:57.230 GD6Y5 [Overlay INFO] Binding to endpoint 0.0.0.0:11645
+2024-08-09T06:05:57.237 GD6Y5 [default INFO] * 
+2024-08-09T06:05:57.237 GD6Y5 [default INFO] * Force-starting scp from the current db state.
+2024-08-09T06:05:57.237 GD6Y5 [default INFO] * 
+2024-08-09T06:05:57.237 GD6Y5 [Herder INFO] Force joining SCP with local state
+2024-08-09T06:05:57.237 GD6Y5 [Ledger INFO] Changing state LM_BOOTING_STATE -> LM_SYNCED_STATE
+2024-08-09T06:05:57.244 GD6Y5 [History INFO] Downloading history archive state: .well-known/stellar-history.json
+2024-08-09T06:05:57.299 GD6Y5 [History INFO] Archive information: [name: local, server: soroban-preview-10-July5-43-g965c75cf, currentLedger: 0]
+2024-08-09T06:06:02.317 GD6Y5 [Overlay INFO] Connected to 127.0.0.1:11665
+2024-08-09T06:06:03.229 GD6Y5 [Overlay INFO] Connected to 127.0.0.1:11655
+2024-08-09T06:06:03.366 GD6Y5 [Ledger INFO] Got consensus: [seq=2, prev=2981b1, txs=0, ops=0, sv: [ SIGNED@A txH: d58b38, ct: 1723183551, upgrades: [ ] ]]
+2024-08-09T06:06:03.386 GD6Y5 [Ledger INFO] Closed ledger: [seq=2, hash=58b4ff] at 1723183563386
+2024-08-09T06:06:03.386 GD6Y5 [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:06:03.387 GD6Y5 [SCP INFO] Calculating 3-node network quorum intersection
+2024-08-09T06:06:03.387 GD6Y5 [SCP INFO] Examining 5 node groups for intersection-criticality
+2024-08-09T06:06:03.404 GD6Y5 [SCP INFO] No intersection-critical groups found
+2024-08-09T06:06:07.620 GD6Y5 [Overlay INFO] Connected to 127.0.0.1:11625
+2024-08-09T06:06:08.348 GD6Y5 [Herder INFO] Quorum information for 1 : {"cost":0,"lag_ms":null}
+
+2024-08-09T06:06:08.356 GD6Y5 [Ledger INFO] Got consensus: [seq=3, prev=58b4ff, txs=0, ops=0, sv: [ SIGNED@B txH: 193807, ct: 1723183567, upgrades: [ ] ]]
+2024-08-09T06:06:08.367 GD6Y5 [Ledger INFO] Closed ledger: [seq=3, hash=d2f98f] at 1723183568367
+2024-08-09T06:06:08.367 GD6Y5 [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:06:08.372 GD6Y5 [SCP INFO] Calculating 4-node network quorum intersection
+2024-08-09T06:06:08.372 GD6Y5 [SCP INFO] Examining 6 node groups for intersection-criticality
+2024-08-09T06:06:08.372 GD6Y5 [SCP WARNING] Group is intersection-critical: [A] (with 2 depending nodes)
+2024-08-09T06:06:08.372 GD6Y5 [SCP WARNING] Group is intersection-critical: [C] (with 2 depending nodes)
+2024-08-09T06:06:08.372 GD6Y5 [SCP WARNING] Found 2 intersection-critical groups
+2024-08-09T06:06:15.509 GD6Y5 [Herder INFO] Quorum information for 2 : {"agree":4,"cost":10160,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":null,"ledger":2,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:15.519 GD6Y5 [Ledger INFO] Got consensus: [seq=4, prev=d2f98f, txs=0, ops=0, sv: [ SIGNED@A txH: f783c9, ct: 1723183573, upgrades: [ ] ]]
+2024-08-09T06:06:15.542 GD6Y5 [Ledger INFO] Closed ledger: [seq=4, hash=f95d91] at 1723183575542
+2024-08-09T06:06:19.457 GD6Y5 [Herder INFO] Quorum information for 3 : {"agree":4,"cost":6372,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":null,"ledger":3,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:19.464 GD6Y5 [Ledger INFO] Got consensus: [seq=5, prev=f95d91, txs=0, ops=0, sv: [ SIGNED@B txH: 92a004, ct: 1723183579, upgrades: [ ] ]]
+2024-08-09T06:06:19.473 GD6Y5 [Ledger INFO] Closed ledger: [seq=5, hash=398c94] at 1723183579473
+2024-08-09T06:06:24.485 GD6Y5 [Herder INFO] Quorum information for 4 : {"agree":4,"cost":16624,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":null,"ledger":4,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:24.493 GD6Y5 [Ledger INFO] Got consensus: [seq=6, prev=398c94, txs=0, ops=0, sv: [ SIGNED@D txH: 0bc4cd, ct: 1723183584, upgrades: [ ] ]]
+2024-08-09T06:06:24.504 GD6Y5 [Ledger INFO] Closed ledger: [seq=6, hash=c42b96] at 1723183584504
+2024-08-09T06:06:31.510 GD6Y5 [Herder INFO] Quorum information for 5 : {"agree":4,"cost":6372,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":54,"ledger":5,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:31.520 GD6Y5 [Ledger INFO] Got consensus: [seq=7, prev=c42b96, txs=0, ops=0, sv: [ SIGNED@C txH: faac7b, ct: 1723183589, upgrades: [ ] ]]
+2024-08-09T06:06:31.536 GD6Y5 [Ledger INFO] Closed ledger: [seq=7, hash=f47adc] at 1723183591536
+2024-08-09T06:06:37.512 GD6Y5 [Herder INFO] Quorum information for 6 : {"agree":4,"cost":8008,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":54,"ledger":6,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:37.519 GD6Y5 [Ledger INFO] Got consensus: [seq=8, prev=f47adc, txs=0, ops=0, sv: [ SIGNED@C txH: 0ba309, ct: 1723183595, upgrades: [ ] ]]
+2024-08-09T06:06:37.535 GD6Y5 [Ledger INFO] Closed ledger: [seq=8, hash=608c40] at 1723183597535
+2024-08-09T06:06:41.516 GD6Y5 [Herder INFO] Quorum information for 7 : {"agree":4,"cost":16432,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":54,"ledger":7,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:41.524 GD6Y5 [Ledger INFO] Got consensus: [seq=9, prev=608c40, txs=0, ops=0, sv: [ SIGNED@B txH: 496816, ct: 1723183601, upgrades: [ ] ]]
+2024-08-09T06:06:41.536 GD6Y5 [Ledger INFO] Closed ledger: [seq=9, hash=e19ed0] at 1723183601536
+2024-08-09T06:06:46.527 GD6Y5 [Herder INFO] Quorum information for 8 : {"agree":4,"cost":16624,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":54,"ledger":8,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:46.535 GD6Y5 [Ledger INFO] Got consensus: [seq=10, prev=e19ed0, txs=0, ops=0, sv: [ SIGNED@B txH: 44b802, ct: 1723183606, upgrades: [ ] ]]
+2024-08-09T06:06:46.546 GD6Y5 [Ledger INFO] Closed ledger: [seq=10, hash=496584] at 1723183606546
+2024-08-09T06:06:51.548 GD6Y5 [Herder INFO] Quorum information for 9 : {"agree":4,"cost":8332,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":54,"ledger":9,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:51.557 GD6Y5 [Ledger INFO] Got consensus: [seq=11, prev=496584, txs=1, ops=1, sv: [ SIGNED@B txH: 084e92, ct: 1723183611, upgrades: [ ] ]]
+2024-08-09T06:06:51.563 GD6Y5 [Tx INFO] applying ledger 11 (txs:1, ops:1, base_fee:100)
+2024-08-09T06:06:51.571 GD6Y5 [Tx INFO] Apply tx: 596e03 at 1723183611571
+2024-08-09T06:06:51.585 GD6Y5 [Ledger INFO] Closed ledger: [seq=11, hash=15c493] at 1723183611585
+2024-08-09T06:06:56.555 GD6Y5 [Herder INFO] Quorum information for 10 : {"agree":4,"cost":7680,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":54,"ledger":10,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:56.564 GD6Y5 [Ledger INFO] Got consensus: [seq=12, prev=15c493, txs=0, ops=0, sv: [ SIGNED@B txH: 6e56b5, ct: 1723183616, upgrades: [ ] ]]
+2024-08-09T06:06:56.573 GD6Y5 [Ledger INFO] Closed ledger: [seq=12, hash=a88ab3] at 1723183616573
+2024-08-09T06:07:01.566 GD6Y5 [Herder INFO] Quorum information for 11 : {"agree":4,"cost":11272,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":50,"ledger":11,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:01.573 GD6Y5 [Ledger INFO] Got consensus: [seq=13, prev=a88ab3, txs=0, ops=0, sv: [ SIGNED@B txH: 0a92d9, ct: 1723183621, upgrades: [ ] ]]
+2024-08-09T06:07:01.584 GD6Y5 [Ledger INFO] Closed ledger: [seq=13, hash=b46a61] at 1723183621584
+2024-08-09T06:07:06.576 GD6Y5 [Herder INFO] Quorum information for 12 : {"agree":4,"cost":7528,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":50,"ledger":12,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:06.583 GD6Y5 [Ledger INFO] Got consensus: [seq=14, prev=b46a61, txs=0, ops=0, sv: [ SIGNED@B txH: 98c602, ct: 1723183626, upgrades: [ ] ]]
+2024-08-09T06:07:06.594 GD6Y5 [Ledger INFO] Closed ledger: [seq=14, hash=01e8c0] at 1723183626594
+2024-08-09T06:07:11.586 GD6Y5 [Herder INFO] Quorum information for 13 : {"agree":4,"cost":8200,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":50,"ledger":13,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:11.593 GD6Y5 [Ledger INFO] Got consensus: [seq=15, prev=01e8c0, txs=0, ops=0, sv: [ SIGNED@B txH: 202b98, ct: 1723183631, upgrades: [ ] ]]
+2024-08-09T06:07:11.601 GD6Y5 [Ledger INFO] Closed ledger: [seq=15, hash=98f514] at 1723183631601
+2024-08-09T06:07:16.626 GD6Y5 [Herder INFO] Quorum information for 14 : {"agree":4,"cost":7528,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":50,"ledger":14,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:16.634 GD6Y5 [Ledger INFO] Got consensus: [seq=16, prev=98f514, txs=1, ops=2, sv: [ SIGNED@C txH: 304612, ct: 1723183636, upgrades: [ ] ]]
+2024-08-09T06:07:16.634 GD6Y5 [Tx INFO] applying ledger 16 (txs:1, ops:2, base_fee:100)
+2024-08-09T06:07:16.634 GD6Y5 [Tx INFO] Transactions: leave transaction complete at 1723183636634. Leaving node: GDBVJ
+2024-08-09T06:07:16.635 GD6Y5 [Tx INFO] Apply tx: dc1c03 at 1723183636635
+2024-08-09T06:07:16.651 GD6Y5 [Ledger INFO] Closed ledger: [seq=16, hash=1722a9] at 1723183636651
+2024-08-09T06:07:16.651 GD6Y5 [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:07:16.652 GD6Y5 [SCP INFO] Calculating 4-node network quorum intersection
+2024-08-09T06:07:16.652 GD6Y5 [SCP ERROR] Found potential disjoint quorums: {D} vs. {C, A, B}
+2024-08-09T06:07:17.641 GD6Y5 [Overlay INFO] Dropping peer 127.0.0.1:11625, reason error reading message header: Connection reset by peer
+2024-08-09T06:07:21.630 GD6Y5 [Herder INFO] Quorum information for 15 : {"agree":7,"cost":7680,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":51,"ledger":15,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:21.636 GD6Y5 [Ledger INFO] Got consensus: [seq=17, prev=1722a9, txs=0, ops=0, sv: [ SIGNED@C txH: 176384, ct: 1723183641, upgrades: [ ] ]]
+2024-08-09T06:07:21.646 GD6Y5 [Ledger INFO] Closed ledger: [seq=17, hash=032d47] at 1723183641646
+2024-08-09T06:07:21.647 GD6Y5 [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:07:21.647 GD6Y5 [SCP INFO] Calculating 3-node network quorum intersection
+2024-08-09T06:07:21.647 GD6Y5 [SCP INFO] Examining 4 node groups for intersection-criticality
+2024-08-09T06:07:21.647 GD6Y5 [SCP INFO] No intersection-critical groups found
+2024-08-09T06:07:26.635 GD6Y5 [Herder INFO] Quorum information for 16 : {"agree":7,"cost":17640,"delayed":0,"disagree":0,"fail_at":3,"hash":"9f74a6","lag_ms":51,"ledger":16,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:26.642 GD6Y5 [Ledger INFO] Got consensus: [seq=18, prev=032d47, txs=0, ops=0, sv: [ SIGNED@C txH: 4f36ac, ct: 1723183646, upgrades: [ ] ]]
+2024-08-09T06:07:26.652 GD6Y5 [Ledger INFO] Closed ledger: [seq=18, hash=bce4ce] at 1723183646652
+2024-08-09T06:07:31.627 GD6Y5 [Herder INFO] Quorum information for 17 : {"agree":7,"cost":5192,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":17,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:31.632 GD6Y5 [Ledger INFO] Got consensus: [seq=19, prev=bce4ce, txs=0, ops=0, sv: [ SIGNED@B txH: 62f503, ct: 1723183651, upgrades: [ ] ]]
+2024-08-09T06:07:31.642 GD6Y5 [Ledger INFO] Closed ledger: [seq=19, hash=163b99] at 1723183651642
+2024-08-09T06:07:36.655 GD6Y5 [Herder INFO] Quorum information for 18 : {"agree":7,"cost":4568,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":18,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:36.661 GD6Y5 [Ledger INFO] Got consensus: [seq=20, prev=163b99, txs=0, ops=0, sv: [ SIGNED@C txH: 46e46b, ct: 1723183656, upgrades: [ ] ]]
+2024-08-09T06:07:36.669 GD6Y5 [Ledger INFO] Closed ledger: [seq=20, hash=0edaa3] at 1723183656669
+2024-08-09T06:07:41.654 GD6Y5 [Herder INFO] Quorum information for 19 : {"agree":7,"cost":4752,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":19,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:41.660 GD6Y5 [Ledger INFO] Got consensus: [seq=21, prev=0edaa3, txs=0, ops=0, sv: [ SIGNED@B txH: 478925, ct: 1723183661, upgrades: [ ] ]]
+2024-08-09T06:07:41.670 GD6Y5 [Ledger INFO] Closed ledger: [seq=21, hash=d89abf] at 1723183661670
+2024-08-09T06:07:46.664 GD6Y5 [Herder INFO] Quorum information for 20 : {"agree":7,"cost":4568,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":20,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:46.669 GD6Y5 [Ledger INFO] Got consensus: [seq=22, prev=d89abf, txs=0, ops=0, sv: [ SIGNED@B txH: ee402c, ct: 1723183666, upgrades: [ ] ]]
+2024-08-09T06:07:46.680 GD6Y5 [Ledger INFO] Closed ledger: [seq=22, hash=b0ca05] at 1723183666680
+2024-08-09T06:07:51.674 GD6Y5 [Herder INFO] Quorum information for 21 : {"agree":7,"cost":4128,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":21,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:51.680 GD6Y5 [Ledger INFO] Got consensus: [seq=23, prev=b0ca05, txs=0, ops=0, sv: [ SIGNED@B txH: 7c9d23, ct: 1723183671, upgrades: [ ] ]]
+2024-08-09T06:07:51.689 GD6Y5 [Ledger INFO] Closed ledger: [seq=23, hash=30ca11] at 1723183671689
+2024-08-09T06:07:58.693 GD6Y5 [Herder INFO] Quorum information for 22 : {"agree":7,"cost":4752,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":22,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:58.700 GD6Y5 [Ledger INFO] Got consensus: [seq=24, prev=30ca11, txs=0, ops=0, sv: [ SIGNED@C txH: 06a846, ct: 1723183676, upgrades: [ ] ]]
+2024-08-09T06:07:58.713 GD6Y5 [Ledger INFO] Closed ledger: [seq=24, hash=cc8f54] at 1723183678713
+2024-08-09T06:08:02.693 GD6Y5 [Herder INFO] Quorum information for 23 : {"agree":7,"cost":4128,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":23,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:02.700 GD6Y5 [Ledger INFO] Got consensus: [seq=25, prev=cc8f54, txs=0, ops=0, sv: [ SIGNED@B txH: 6cf74a, ct: 1723183682, upgrades: [ ] ]]
+2024-08-09T06:08:02.710 GD6Y5 [Ledger INFO] Closed ledger: [seq=25, hash=be28b7] at 1723183682710
+2024-08-09T06:08:07.706 GD6Y5 [Herder INFO] Quorum information for 24 : {"agree":7,"cost":10424,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":24,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:07.712 GD6Y5 [Ledger INFO] Got consensus: [seq=26, prev=be28b7, txs=0, ops=0, sv: [ SIGNED@B txH: 7b1f03, ct: 1723183687, upgrades: [ ] ]]
+2024-08-09T06:08:07.720 GD6Y5 [Ledger INFO] Closed ledger: [seq=26, hash=fce705] at 1723183687720
+2024-08-09T06:08:14.726 GD6Y5 [Herder INFO] Quorum information for 25 : {"agree":7,"cost":4128,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":25,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:14.734 GD6Y5 [Ledger INFO] Got consensus: [seq=27, prev=fce705, txs=0, ops=0, sv: [ SIGNED@A txH: bf61cd, ct: 1723183692, upgrades: [ ] ]]
+2024-08-09T06:08:14.749 GD6Y5 [Ledger INFO] Closed ledger: [seq=27, hash=d15a30] at 1723183694749
+2024-08-09T06:08:18.723 GD6Y5 [Herder INFO] Quorum information for 26 : {"agree":7,"cost":4128,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":26,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:18.729 GD6Y5 [Ledger INFO] Got consensus: [seq=28, prev=d15a30, txs=0, ops=0, sv: [ SIGNED@B txH: 404ec7, ct: 1723183698, upgrades: [ ] ]]
+2024-08-09T06:08:18.737 GD6Y5 [Ledger INFO] Closed ledger: [seq=28, hash=1725cc] at 1723183698737
+2024-08-09T06:08:23.732 GD6Y5 [Herder INFO] Quorum information for 27 : {"agree":7,"cost":10424,"delayed":0,"disagree":0,"fail_at":4,"hash":"805ea5","lag_ms":41,"ledger":27,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:23.738 GD6Y5 [Ledger INFO] Got consensus: [seq=29, prev=1725cc, txs=0, ops=0, sv: [ SIGNED@B txH: eedbfb, ct: 1723183703, upgrades: [ ] ]]
+2024-08-09T06:08:23.748 GD6Y5 [Ledger INFO] Closed ledger: [seq=29, hash=069969] at 1723183703748
+2024-08-09T06:08:26.853 GD6Y5 [Overlay INFO] Dropping peer 127.0.0.1:11655, reason error reading message header: End of file
+^C2024-08-09T06:08:28.829 GD6Y5 [default INFO] got signal 2, shutting down
+2024-08-09T06:08:29.831 GD6Y5 [default INFO] Application destructing
+2024-08-09T06:08:29.835 GD6Y5 [default INFO] Application destroyed

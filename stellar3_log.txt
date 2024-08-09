@@ -1,0 +1,174 @@
+2024-08-09T06:06:01.033 [default INFO] Config from stellar_nodeC.cfg
+2024-08-09T06:06:01.035 [default INFO] 'ARTIFICIALLY_GENERATE_LOAD_FOR_TESTING' enabled in configuration file - node will not function properly with most networks
+2024-08-09T06:06:01.035 [default INFO] Using QUORUM_SET: {
+   "t" : 2,
+   "v" : [ "B", "C" ]
+}
+
+2024-08-09T06:06:01.035 [default WARNING] Adjusted TARGET_PEER_CONNECTIONS to 9 due to insufficient MAX_ADDITIONAL_PEER_CONNECTIONS=20
+2024-08-09T06:06:01.036 GCOXF [default INFO] Starting stellar-core soroban-preview-10-July5-102-g641ab7cf-dirty
+2024-08-09T06:06:01.041 GCOXF [Database INFO] Connecting to: postgresql://dbname=core4 host=localhost user=stellar4 password=********
+2024-08-09T06:06:01.108 GCOXF [SCP INFO] LocalNode::LocalNode@C qSet: 6cda74
+2024-08-09T06:06:01.130 GCOXF [Database INFO] DB schema is in current version
+2024-08-09T06:06:01.132 GCOXF [default INFO] Listening on 0.0.0.0:11656 for HTTP requests
+2024-08-09T06:06:01.133 GCOXF [default INFO] Connection effective settings:
+2024-08-09T06:06:01.133 GCOXF [default INFO] TARGET_PEER_CONNECTIONS: 9
+2024-08-09T06:06:01.133 GCOXF [default INFO] MAX_ADDITIONAL_PEER_CONNECTIONS: 20
+2024-08-09T06:06:01.133 GCOXF [default INFO] MAX_PENDING_CONNECTIONS: 500
+2024-08-09T06:06:01.133 GCOXF [default INFO] MAX_OUTBOUND_PENDING_CONNECTIONS: 156
+2024-08-09T06:06:01.133 GCOXF [default INFO] MAX_INBOUND_PENDING_CONNECTIONS: 344
+2024-08-09T06:06:01.133 GCOXF [History INFO] Archive 'local' has 'get' command only, will not be written
+2024-08-09T06:06:01.133 GCOXF [History WARNING] No writable archives configured, history will not be written.
+2024-08-09T06:06:01.134 GCOXF [Ledger INFO] Last closed ledger (LCL) hash is 2981b1d264ed929a058b4236323f7986359372ec711d0e546813dbad25f029f4
+2024-08-09T06:06:01.135 GCOXF [Ledger INFO] Loaded LCL header from database: [seq=1, hash=2981b1]
+2024-08-09T06:06:01.137 GCOXF [Ledger INFO] Starting up application
+2024-08-09T06:06:01.138 GCOXF [Ledger INFO] Last closed ledger (LCL) hash is 2981b1d264ed929a058b4236323f7986359372ec711d0e546813dbad25f029f4
+2024-08-09T06:06:01.139 GCOXF [Ledger INFO] Loaded LCL header from database: [seq=1, hash=2981b1]
+2024-08-09T06:06:01.144 GCOXF [Ledger INFO] Assumed bucket-state for LCL: [seq=1, hash=2981b1]
+2024-08-09T06:06:01.155 GCOXF [Overlay INFO] Binding to endpoint 0.0.0.0:11655
+2024-08-09T06:06:01.159 GCOXF [default INFO] * 
+2024-08-09T06:06:01.160 GCOXF [default INFO] * Force-starting scp from the current db state.
+2024-08-09T06:06:01.160 GCOXF [default INFO] * 
+2024-08-09T06:06:01.160 GCOXF [Herder INFO] Force joining SCP with local state
+2024-08-09T06:06:01.160 GCOXF [Ledger INFO] Changing state LM_BOOTING_STATE -> LM_SYNCED_STATE
+2024-08-09T06:06:01.167 GCOXF [History INFO] Downloading history archive state: .well-known/stellar-history.json
+2024-08-09T06:06:01.179 GCOXF [History INFO] Archive information: [name: local, server: soroban-preview-10-July5-43-g965c75cf, currentLedger: 0]
+2024-08-09T06:06:02.850 GCOXF [Overlay INFO] Connected to 127.0.0.1:11665
+2024-08-09T06:06:03.229 GCOXF [Overlay INFO] Connected to 127.0.0.1:11645
+2024-08-09T06:06:03.365 GCOXF [Ledger INFO] Got consensus: [seq=2, prev=2981b1, txs=0, ops=0, sv: [ SIGNED@A txH: d58b38, ct: 1723183551, upgrades: [ ] ]]
+2024-08-09T06:06:03.382 GCOXF [Ledger INFO] Closed ledger: [seq=2, hash=58b4ff] at 1723183563382
+2024-08-09T06:06:03.383 GCOXF [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:06:03.398 GCOXF [SCP INFO] Calculating 3-node network quorum intersection
+2024-08-09T06:06:03.398 GCOXF [SCP INFO] Examining 5 node groups for intersection-criticality
+2024-08-09T06:06:03.399 GCOXF [SCP INFO] No intersection-critical groups found
+2024-08-09T06:06:07.618 GCOXF [Overlay INFO] Connected to 127.0.0.1:11625
+2024-08-09T06:06:08.375 GCOXF [Herder INFO] Quorum information for 1 : {"cost":0,"lag_ms":null}
+
+2024-08-09T06:06:08.387 GCOXF [Ledger INFO] Got consensus: [seq=3, prev=58b4ff, txs=0, ops=0, sv: [ SIGNED@B txH: 193807, ct: 1723183567, upgrades: [ ] ]]
+2024-08-09T06:06:08.413 GCOXF [Ledger INFO] Closed ledger: [seq=3, hash=d2f98f] at 1723183568413
+2024-08-09T06:06:08.413 GCOXF [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:06:08.413 GCOXF [SCP INFO] Calculating 4-node network quorum intersection
+2024-08-09T06:06:08.413 GCOXF [SCP INFO] Examining 6 node groups for intersection-criticality
+2024-08-09T06:06:08.415 GCOXF [SCP WARNING] Group is intersection-critical: [A] (with 2 depending nodes)
+2024-08-09T06:06:08.415 GCOXF [SCP WARNING] Group is intersection-critical: [C] (with 2 depending nodes)
+2024-08-09T06:06:08.415 GCOXF [SCP WARNING] Found 2 intersection-critical groups
+2024-08-09T06:06:15.511 GCOXF [Herder INFO] Quorum information for 2 : {"agree":2,"cost":9516,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":null,"ledger":2,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:15.524 GCOXF [Ledger INFO] Got consensus: [seq=4, prev=d2f98f, txs=0, ops=0, sv: [ SIGNED@A txH: f783c9, ct: 1723183573, upgrades: [ ] ]]
+2024-08-09T06:06:15.543 GCOXF [Ledger INFO] Closed ledger: [seq=4, hash=f95d91] at 1723183575543
+2024-08-09T06:06:19.477 GCOXF [Herder INFO] Quorum information for 3 : {"agree":2,"cost":7228,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":null,"ledger":3,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:19.484 GCOXF [Ledger INFO] Got consensus: [seq=5, prev=f95d91, txs=0, ops=0, sv: [ SIGNED@B txH: 92a004, ct: 1723183579, upgrades: [ ] ]]
+2024-08-09T06:06:19.496 GCOXF [Ledger INFO] Closed ledger: [seq=5, hash=398c94] at 1723183579496
+2024-08-09T06:06:24.509 GCOXF [Herder INFO] Quorum information for 4 : {"agree":2,"cost":17348,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":null,"ledger":4,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:24.518 GCOXF [Ledger INFO] Got consensus: [seq=6, prev=398c94, txs=0, ops=0, sv: [ SIGNED@D txH: 0bc4cd, ct: 1723183584, upgrades: [ ] ]]
+2024-08-09T06:06:24.530 GCOXF [Ledger INFO] Closed ledger: [seq=6, hash=c42b96] at 1723183584530
+2024-08-09T06:06:31.510 GCOXF [Herder INFO] Quorum information for 5 : {"agree":2,"cost":6604,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":39,"ledger":5,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:31.518 GCOXF [Ledger INFO] Got consensus: [seq=7, prev=c42b96, txs=0, ops=0, sv: [ SIGNED@C txH: faac7b, ct: 1723183589, upgrades: [ ] ]]
+2024-08-09T06:06:31.534 GCOXF [Ledger INFO] Closed ledger: [seq=7, hash=f47adc] at 1723183591534
+2024-08-09T06:06:37.513 GCOXF [Herder INFO] Quorum information for 6 : {"agree":2,"cost":8864,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":39,"ledger":6,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:37.520 GCOXF [Ledger INFO] Got consensus: [seq=8, prev=f47adc, txs=0, ops=0, sv: [ SIGNED@C txH: 0ba309, ct: 1723183595, upgrades: [ ] ]]
+2024-08-09T06:06:37.533 GCOXF [Ledger INFO] Closed ledger: [seq=8, hash=608c40] at 1723183597533
+2024-08-09T06:06:41.539 GCOXF [Herder INFO] Quorum information for 7 : {"agree":2,"cost":17348,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":39,"ledger":7,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:41.549 GCOXF [Ledger INFO] Got consensus: [seq=9, prev=608c40, txs=0, ops=0, sv: [ SIGNED@B txH: 496816, ct: 1723183601, upgrades: [ ] ]]
+2024-08-09T06:06:41.563 GCOXF [Ledger INFO] Closed ledger: [seq=9, hash=e19ed0] at 1723183601563
+2024-08-09T06:06:46.549 GCOXF [Herder INFO] Quorum information for 8 : {"agree":2,"cost":17540,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":39,"ledger":8,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:46.557 GCOXF [Ledger INFO] Got consensus: [seq=10, prev=e19ed0, txs=0, ops=0, sv: [ SIGNED@B txH: 44b802, ct: 1723183606, upgrades: [ ] ]]
+2024-08-09T06:06:46.571 GCOXF [Ledger INFO] Closed ledger: [seq=10, hash=496584] at 1723183606571
+2024-08-09T06:06:51.588 GCOXF [Herder INFO] Quorum information for 9 : {"agree":2,"cost":8564,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":39,"ledger":9,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:51.598 GCOXF [Ledger INFO] Got consensus: [seq=11, prev=496584, txs=1, ops=1, sv: [ SIGNED@B txH: 084e92, ct: 1723183611, upgrades: [ ] ]]
+2024-08-09T06:06:51.601 GCOXF [Tx INFO] applying ledger 11 (txs:1, ops:1, base_fee:100)
+2024-08-09T06:06:51.604 GCOXF [Tx INFO] Apply tx: 596e03 at 1723183611604
+2024-08-09T06:06:51.624 GCOXF [Ledger INFO] Closed ledger: [seq=11, hash=15c493] at 1723183611624
+2024-08-09T06:06:56.576 GCOXF [Herder INFO] Quorum information for 10 : {"agree":2,"cost":8536,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":39,"ledger":10,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:06:56.584 GCOXF [Ledger INFO] Got consensus: [seq=12, prev=15c493, txs=0, ops=0, sv: [ SIGNED@B txH: 6e56b5, ct: 1723183616, upgrades: [ ] ]]
+2024-08-09T06:06:56.597 GCOXF [Ledger INFO] Closed ledger: [seq=12, hash=a88ab3] at 1723183616597
+2024-08-09T06:07:01.587 GCOXF [Herder INFO] Quorum information for 11 : {"agree":2,"cost":12320,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":29,"ledger":11,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:01.595 GCOXF [Ledger INFO] Got consensus: [seq=13, prev=a88ab3, txs=0, ops=0, sv: [ SIGNED@B txH: 0a92d9, ct: 1723183621, upgrades: [ ] ]]
+2024-08-09T06:07:01.604 GCOXF [Ledger INFO] Closed ledger: [seq=13, hash=b46a61] at 1723183621604
+2024-08-09T06:07:06.598 GCOXF [Herder INFO] Quorum information for 12 : {"agree":2,"cost":8384,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":29,"ledger":12,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:06.605 GCOXF [Ledger INFO] Got consensus: [seq=14, prev=b46a61, txs=0, ops=0, sv: [ SIGNED@B txH: 98c602, ct: 1723183626, upgrades: [ ] ]]
+2024-08-09T06:07:06.621 GCOXF [Ledger INFO] Closed ledger: [seq=14, hash=01e8c0] at 1723183626621
+2024-08-09T06:07:11.604 GCOXF [Herder INFO] Quorum information for 13 : {"agree":2,"cost":9056,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":29,"ledger":13,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:11.613 GCOXF [Ledger INFO] Got consensus: [seq=15, prev=01e8c0, txs=0, ops=0, sv: [ SIGNED@B txH: 202b98, ct: 1723183631, upgrades: [ ] ]]
+2024-08-09T06:07:11.623 GCOXF [Ledger INFO] Closed ledger: [seq=15, hash=98f514] at 1723183631623
+2024-08-09T06:07:16.599 GCOXF [Herder INFO] Quorum information for 14 : {"agree":2,"cost":8384,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":29,"ledger":14,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:16.606 GCOXF [Ledger INFO] Got consensus: [seq=16, prev=98f514, txs=1, ops=2, sv: [ SIGNED@C txH: 304612, ct: 1723183636, upgrades: [ ] ]]
+2024-08-09T06:07:16.607 GCOXF [Tx INFO] applying ledger 16 (txs:1, ops:2, base_fee:100)
+2024-08-09T06:07:16.607 GCOXF [Tx INFO] Transactions: leave transaction complete at 1723183636607. Leaving node: GDBVJ
+2024-08-09T06:07:16.608 GCOXF [Tx INFO] Apply tx: dc1c03 at 1723183636608
+2024-08-09T06:07:16.622 GCOXF [Ledger INFO] Closed ledger: [seq=16, hash=1722a9] at 1723183636622
+2024-08-09T06:07:16.623 GCOXF [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:07:16.623 GCOXF [SCP INFO] Calculating 4-node network quorum intersection
+2024-08-09T06:07:16.623 GCOXF [SCP ERROR] Found potential disjoint quorums: {D} vs. {A, B, C}
+2024-08-09T06:07:17.641 GCOXF [Overlay INFO] Dropping peer 127.0.0.1:11625, reason error reading message header: Connection reset by peer
+2024-08-09T06:07:21.606 GCOXF [Herder INFO] Quorum information for 15 : {"agree":2,"cost":7912,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":29,"ledger":15,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:21.613 GCOXF [Ledger INFO] Got consensus: [seq=17, prev=1722a9, txs=0, ops=0, sv: [ SIGNED@C txH: 176384, ct: 1723183641, upgrades: [ ] ]]
+2024-08-09T06:07:21.627 GCOXF [Ledger INFO] Closed ledger: [seq=17, hash=032d47] at 1723183641627
+2024-08-09T06:07:21.627 GCOXF [Herder INFO] Transitive closure of quorum has changed, re-analyzing.
+2024-08-09T06:07:21.627 GCOXF [SCP INFO] Calculating 3-node network quorum intersection
+2024-08-09T06:07:21.627 GCOXF [SCP INFO] Examining 4 node groups for intersection-criticality
+2024-08-09T06:07:21.627 GCOXF [SCP INFO] No intersection-critical groups found
+2024-08-09T06:07:26.615 GCOXF [Herder INFO] Quorum information for 16 : {"agree":2,"cost":17048,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":29,"ledger":16,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:26.620 GCOXF [Ledger INFO] Got consensus: [seq=18, prev=032d47, txs=0, ops=0, sv: [ SIGNED@C txH: 4f36ac, ct: 1723183646, upgrades: [ ] ]]
+2024-08-09T06:07:26.633 GCOXF [Ledger INFO] Closed ledger: [seq=18, hash=bce4ce] at 1723183646633
+2024-08-09T06:07:31.645 GCOXF [Herder INFO] Quorum information for 17 : {"agree":2,"cost":5668,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":43,"ledger":17,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:31.652 GCOXF [Ledger INFO] Got consensus: [seq=19, prev=bce4ce, txs=0, ops=0, sv: [ SIGNED@B txH: 62f503, ct: 1723183651, upgrades: [ ] ]]
+2024-08-09T06:07:31.663 GCOXF [Ledger INFO] Closed ledger: [seq=19, hash=163b99] at 1723183651663
+2024-08-09T06:07:36.637 GCOXF [Herder INFO] Quorum information for 18 : {"agree":2,"cost":5044,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":43,"ledger":18,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:36.643 GCOXF [Ledger INFO] Got consensus: [seq=20, prev=163b99, txs=0, ops=0, sv: [ SIGNED@C txH: 46e46b, ct: 1723183656, upgrades: [ ] ]]
+2024-08-09T06:07:36.653 GCOXF [Ledger INFO] Closed ledger: [seq=20, hash=0edaa3] at 1723183656653
+2024-08-09T06:07:41.673 GCOXF [Herder INFO] Quorum information for 19 : {"agree":2,"cost":6328,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":43,"ledger":19,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:41.681 GCOXF [Ledger INFO] Got consensus: [seq=21, prev=0edaa3, txs=0, ops=0, sv: [ SIGNED@B txH: 478925, ct: 1723183661, upgrades: [ ] ]]
+2024-08-09T06:07:41.692 GCOXF [Ledger INFO] Closed ledger: [seq=21, hash=d89abf] at 1723183661692
+2024-08-09T06:07:46.684 GCOXF [Herder INFO] Quorum information for 20 : {"agree":2,"cost":5044,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":43,"ledger":20,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:46.690 GCOXF [Ledger INFO] Got consensus: [seq=22, prev=d89abf, txs=0, ops=0, sv: [ SIGNED@B txH: ee402c, ct: 1723183666, upgrades: [ ] ]]
+2024-08-09T06:07:46.700 GCOXF [Ledger INFO] Closed ledger: [seq=22, hash=b0ca05] at 1723183666700
+2024-08-09T06:07:51.692 GCOXF [Herder INFO] Quorum information for 21 : {"agree":2,"cost":5704,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":43,"ledger":21,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:51.699 GCOXF [Ledger INFO] Got consensus: [seq=23, prev=b0ca05, txs=0, ops=0, sv: [ SIGNED@B txH: 7c9d23, ct: 1723183671, upgrades: [ ] ]]
+2024-08-09T06:07:51.712 GCOXF [Ledger INFO] Closed ledger: [seq=23, hash=30ca11] at 1723183671712
+2024-08-09T06:07:58.693 GCOXF [Herder INFO] Quorum information for 22 : {"agree":2,"cost":5704,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":43,"ledger":22,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:07:58.700 GCOXF [Ledger INFO] Got consensus: [seq=24, prev=30ca11, txs=0, ops=0, sv: [ SIGNED@C txH: 06a846, ct: 1723183676, upgrades: [ ] ]]
+2024-08-09T06:07:58.713 GCOXF [Ledger INFO] Closed ledger: [seq=24, hash=cc8f54] at 1723183678713
+2024-08-09T06:08:02.713 GCOXF [Herder INFO] Quorum information for 23 : {"agree":2,"cost":5704,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":24,"ledger":23,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:02.720 GCOXF [Ledger INFO] Got consensus: [seq=25, prev=cc8f54, txs=0, ops=0, sv: [ SIGNED@B txH: 6cf74a, ct: 1723183682, upgrades: [ ] ]]
+2024-08-09T06:08:02.729 GCOXF [Ledger INFO] Closed ledger: [seq=25, hash=be28b7] at 1723183682729
+2024-08-09T06:08:07.723 GCOXF [Herder INFO] Quorum information for 24 : {"agree":2,"cost":12636,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":24,"ledger":24,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:07.731 GCOXF [Ledger INFO] Got consensus: [seq=26, prev=be28b7, txs=0, ops=0, sv: [ SIGNED@B txH: 7b1f03, ct: 1723183687, upgrades: [ ] ]]
+2024-08-09T06:08:07.742 GCOXF [Ledger INFO] Closed ledger: [seq=26, hash=fce705] at 1723183687742
+2024-08-09T06:08:14.727 GCOXF [Herder INFO] Quorum information for 25 : {"agree":2,"cost":5704,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":24,"ledger":25,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:14.735 GCOXF [Ledger INFO] Got consensus: [seq=27, prev=fce705, txs=0, ops=0, sv: [ SIGNED@A txH: bf61cd, ct: 1723183692, upgrades: [ ] ]]
+2024-08-09T06:08:14.749 GCOXF [Ledger INFO] Closed ledger: [seq=27, hash=d15a30] at 1723183694749
+2024-08-09T06:08:18.741 GCOXF [Herder INFO] Quorum information for 26 : {"agree":2,"cost":5704,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":24,"ledger":26,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:18.752 GCOXF [Ledger INFO] Got consensus: [seq=28, prev=d15a30, txs=0, ops=0, sv: [ SIGNED@B txH: 404ec7, ct: 1723183698, upgrades: [ ] ]]
+2024-08-09T06:08:18.761 GCOXF [Ledger INFO] Closed ledger: [seq=28, hash=1725cc] at 1723183698761
+2024-08-09T06:08:23.751 GCOXF [Herder INFO] Quorum information for 27 : {"agree":2,"cost":12444,"delayed":0,"disagree":0,"fail_at":1,"hash":"6cda74","lag_ms":24,"ledger":27,"missing":0,"phase":"EXTERNALIZE","validated":true}
+
+2024-08-09T06:08:23.757 GCOXF [Ledger INFO] Got consensus: [seq=29, prev=1725cc, txs=0, ops=0, sv: [ SIGNED@B txH: eedbfb, ct: 1723183703, upgrades: [ ] ]]
+2024-08-09T06:08:23.771 GCOXF [Ledger INFO] Closed ledger: [seq=29, hash=069969] at 1723183703771
+^C2024-08-09T06:08:25.846 GCOXF [default INFO] got signal 2, shutting down
+2024-08-09T06:08:26.847 GCOXF [default INFO] Application destructing
+2024-08-09T06:08:26.849 GCOXF [default INFO] Application destroyed
